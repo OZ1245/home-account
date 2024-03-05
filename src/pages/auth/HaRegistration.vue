@@ -79,20 +79,20 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar'
 
+import { ISignUp } from 'src/@types/supabase_auth';
+
 const router = useRouter()
 const $q = useQuasar()
 
-const form = reactive({
-  lastName: null,
-  firstName: null,
-  email: null,
-  password: null
+const form = reactive<ISignUp>({
+  lastName: '',
+  firstName: '',
+  email: '',
+  password: ''
 })
 const loading = ref<boolean>(false)
 
 const submit = () => {
-  console.log('--- submit ---');
-  console.log('loading:', loading);
   loading.value = true
 
   registration(form)

@@ -65,11 +65,13 @@ import { login } from 'app/supabase/auth';
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router';
 
+import { ILogin } from 'src/@types/supabase_auth';
+
 const router = useRouter()
 
-const form = reactive({
-  email: null,
-  password: null
+const form = reactive<ILogin>({
+  email: '',
+  password: ''
 })
 const loading = ref<boolean>(false)
 
@@ -79,7 +81,7 @@ const submit = () => {
   login(form)
     .then((error) => {
       if (!error) {
-        router.push({ name: 'Home' })
+        router.push('/')
       }
 
       loading.value = false

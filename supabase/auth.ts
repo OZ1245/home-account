@@ -1,12 +1,7 @@
-import { supabase } from './client.js'
 import { LocalStorage, Notify } from 'quasar'
+import { supabase } from './client.js'
 
-interface ISignUpPayload {
-  email: string,
-  password: string
-  firstName: string
-  lastName?: string
-}
+import { ISignUp, ILogin } from 'src/@types/supabase_auth'
 
 interface INewAccountData {
   uuid: string
@@ -14,12 +9,7 @@ interface INewAccountData {
   lastName?: string
 }
 
-interface ILogin {
-  email: string,
-  password: string
-}
-
-export const registration = async ({ email, password, firstName, lastName }: ISignUpPayload): Promise<any> => {
+export const registration = async ({ email, password, firstName, lastName }: ISignUp): Promise<any> => {
   return await supabase.auth.signUp({
     email,
     password
