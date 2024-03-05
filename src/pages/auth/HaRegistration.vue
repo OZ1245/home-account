@@ -96,19 +96,9 @@ const submit = () => {
   loading.value = true
 
   registration(form)
-    .then(({ error }) => {
+    .then((error) => {
       if (!error) {
         router.push('login')
-
-        $q.notify({
-          message: 'Вы успешно зарегистрировались. Теперь можете войти.',
-          type: 'positive'
-        })
-      } else {
-        $q.notify({
-          message: error,
-          type: 'negative'
-        })
       }
 
       loading.value = false

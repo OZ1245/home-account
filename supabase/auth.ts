@@ -1,4 +1,5 @@
 import { supabase } from './client.js'
+import { LocalStorage, Notify } from 'quasar'
 
 interface ISignUpPayload {
   email: string,
@@ -13,6 +14,11 @@ interface INewAccountData {
   lastName?: string
 }
 
+interface ILogin {
+  email: string,
+  password: string
+}
+
 export const registration = async ({ email, password, firstName, lastName }: ISignUpPayload): Promise<any> => {
   return await supabase.auth.signUp({
     email,
@@ -25,8 +31,20 @@ export const registration = async ({ email, password, firstName, lastName }: ISi
         firstName,
         lastName
       })
-      .then((response) => {
-        return response
+      .then(({ error }) => {
+        if (!error) {
+          Notify.create({
+            message: 'Вы успешно зарегистрировались. Теперь можете войти под своим email.',
+            type: 'positive'
+          })
+        } else {
+          Notify.create({
+            message: error.message,
+            type: 'negative'
+          })
+        }
+
+        return error
       })
       .catch(({ message }) => {
         throw message
@@ -48,4 +66,27 @@ const setNewAccountData = async ({ uuid, firstName, lastName }: INewAccountData)
       }
     ])
     .select()
+}
+
+export const login = async ({ email, password }: ILogin): Promise<any> => {
+  return await supabase.auth.signInWithPassword({
+    email,
+    password
+  })
+  .then(({ data, error }) => {
+    console.log('login response data:', data);
+    LocalStorage.set('homeAccount/token', data.session?.access_token)
+
+    if (error) {
+      Notify.create({
+        message: error.message,
+        type: 'negative'
+      })
+    }
+
+    return error
+  })
+  .catch(({ message }) => {
+    throw message
+  })
 }

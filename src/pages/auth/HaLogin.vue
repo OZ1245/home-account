@@ -13,18 +13,17 @@
               </div>
 
               <q-form
-                ref="form"
                 class="q-gutter-md"
                 @submit="submit"
               >
                 <q-input
-                  v-model="user.email"
+                  v-model="form.email"
                   label="Email"
                   name="Email"
                 />
 
                 <q-input
-                  v-model="user.password"
+                  v-model="form.password"
                   label="Password"
                   name="password"
                   type="password"
@@ -58,19 +57,32 @@
   </div>
 </template>
 
-<script setup>
+<script
+  setup
+  lang="ts"
+>
+import { login } from 'app/supabase/auth';
 import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router';
 
-const user = reactive({
+const router = useRouter()
+
+const form = reactive({
   email: null,
   password: null
 })
+const loading = ref<boolean>(false)
 
-const form = ref(null)
+const submit = () => {
+  loading.value = true
 
-const submit = async () => {
-  if (form.value.validate()) {
+  login(form)
+    .then((error) => {
+      if (!error) {
+        router.push({ name: 'Home' })
+      }
 
-  }
+      loading.value = false
+    })
 }
 </script>
