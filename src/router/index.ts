@@ -6,6 +6,7 @@ import {
   createWebHistory,
 } from 'vue-router';
 import routes from './routes';
+import { LocalStorage } from 'quasar';
 
 /*
  * If not building with SSR mode, you can
@@ -32,6 +33,14 @@ export default route(function (/* { store, ssrContext } */) {
       process.env.VUE_ROUTER_BASE
     ),
   });
+
+  Router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.auth) && !LocalStorage.getItem('homeAccount/token')) {
+      next({ name: 'AccountLogin', query: { next: to.fullPath } })
+    } else {
+      next()
+    }
+  })
 
   return Router;
 });
