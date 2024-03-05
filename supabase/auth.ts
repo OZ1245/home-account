@@ -26,8 +26,7 @@ export const registration = async ({ email, password, firstName, lastName }: ISi
         lastName
       })
       .then((response) => {
-        console.log('responce:', response);
-
+        return response
       })
       .catch(({ message }) => {
         throw message
@@ -43,7 +42,7 @@ const setNewAccountData = async ({ uuid, firstName, lastName }: INewAccountData)
   return await supabase.from('account')
     .insert([
       {
-        uuid,
+        user_id: uuid,
         first_name: firstName,
         last_name: lastName
       }

@@ -47,6 +47,7 @@
                     label="Register"
                     rounded
                     type="submit"
+                    :loading="loading"
                   ></q-btn>
 
                   <div class="q-mt-lg">
@@ -68,9 +69,18 @@
   </div>
 </template>
 
-<script setup>
+<script
+  setup
+  lang="ts"
+>
 import { registration } from 'app/supabase/auth';
-import { reactive } from 'vue'
+
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar'
+
+const router = useRouter()
+const $q = useQuasar()
 
 const form = reactive({
   lastName: null,
@@ -78,10 +88,30 @@ const form = reactive({
   email: null,
   password: null
 })
+const loading = ref<boolean>(false)
 
 const submit = () => {
   console.log('--- submit ---');
+  console.log('loading:', loading);
+  loading.value = true
 
   registration(form)
+    .then(({ error }) => {
+      if (!error) {
+        router.push('login')
+
+        $q.notify({
+          message: 'Вы успешно зарегистрировались. Теперь можете войти.',
+          type: 'positive'
+        })
+      } else {
+        $q.notify({
+          message: error,
+          type: 'negative'
+        })
+      }
+
+      loading.value = false
+    })
 }
 </script>
