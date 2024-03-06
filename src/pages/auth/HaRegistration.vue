@@ -73,7 +73,7 @@
   setup
   lang="ts"
 >
-import { registration } from 'app/supabase/auth';
+import { registration } from 'src/supabase/auth';
 
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router';
@@ -105,3 +105,4 @@ const submit = () => {
     })
 }
 </script>
+src/supabase/auth

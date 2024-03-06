@@ -66,7 +66,7 @@
   setup
   lang="ts"
 >
-import { login } from 'app/supabase/auth';
+import { login } from 'src/supabase/auth';
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router';
 
@@ -92,4 +92,4 @@ const submit = () => {
       loading.value = false
     })
 }
-</script>
+</script>src/supabase/auth

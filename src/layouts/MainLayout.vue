@@ -25,9 +25,7 @@
       bordered
     >
       <q-list>
-        <q-item-label
-          header
-        >
+        <q-item-label header>
           Essential Links
         </q-item-label>
 
@@ -45,7 +43,10 @@
   </q-layout>
 </template>
 
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import { ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
 
@@ -91,6 +92,12 @@ const essentialLinks = [
     caption: 'Community Quasar projects',
     icon: 'favorite',
     link: 'https://awesome.quasar.dev'
+  },
+  {
+    title: 'Account',
+    caption: '',
+    icon: 'account_circle',
+    link: '/account'
   }
 ];
 

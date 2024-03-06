@@ -58,7 +58,7 @@
   setup
   lang="ts"
 >
-import { resetPassword } from 'app/supabase/auth';
+import { resetPassword } from 'src/supabase/auth';
 import { useQuasar } from 'quasar';
 import { ref } from 'vue'
 
@@ -83,3 +83,4 @@ const submit = () => {
     })
 }
 </script>
+src/supabase/auth

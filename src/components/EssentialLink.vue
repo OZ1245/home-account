@@ -2,7 +2,6 @@
   <q-item
     clickable
     tag="a"
-    target="_blank"
     :href="link"
   >
     <q-item-section
@@ -19,7 +18,10 @@
   </q-item>
 </template>
 
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 export interface EssentialLinkProps {
   title: string;
   caption?: string;

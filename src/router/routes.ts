@@ -30,7 +30,14 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
+    children: [
+      { path: '', component: () => import('pages/IndexPage.vue') },
+      {
+        name: 'Account',
+        path: 'account',
+        component: () => import('pages/account/HaAccount.vue')
+      }
+    ],
     meta: {
       auth: true
     }
