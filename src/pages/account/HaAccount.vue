@@ -7,9 +7,10 @@
       class="justify-center items-center"
       @mousemove="handleHoverAvatar"
       @mouseleave="handleLeaveAvatar"
+      @click="handleAvatarClick"
     >
       <q-icon
-        v-show="showAvatarEditIcon"
+        v-show="showAvatarEditIcon && !blockAvatar"
         name="edit"
       />
 
@@ -17,8 +18,19 @@
         v-if="account.avatar"
         :src="account.avatar"
         :alt="`${account.firstName} ${account.lastName}`"
+        class="avatar"
       >
     </q-avatar>
+
+    <q-file
+      v-model="avatar"
+      ref="filePicker"
+      type="file"
+      style="display:none"
+      max-file-size="2097152"
+      accept="image/*"
+      @update:model-value="handleUploadAvatar"
+    />
 
     <h2>{{ account.firstName }} {{ account.lastName }}</h2>
 
@@ -41,8 +53,10 @@ import { fetchAccountData } from 'src/supabase/account'
 import { logout } from 'src/supabase/auth'
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import { useFiles } from 'src/composables/account'
 
 const router = useRouter()
+const { getFullAccountData, uploadAvatar } = useFiles()
 
 let account = reactive({
   avatar: null,
@@ -53,17 +67,24 @@ let account = reactive({
 })
 const showAvatarEditIcon = ref<boolean>(false)
 const loading = ref<boolean>(false)
+const avatar = ref<File | null>(null)
+const filePicker = ref<HTMLElement | null>(null)
+const blockAvatar = ref<boolean>(false)
 
-fetchAccountData()
-  .then((result) => {
-    if (!result) return
+const getAccountData = () => {
+  getFullAccountData()
+    .then((result) => {
+      blockAvatar.value = false
 
-    account.avatar = result.avatar
-    account.firstName = result.firstName
-    account.lastName = result.lastName
-    account.email = result.email
-    account.createdAt = result.createdAt
-  })
+      if (!result) return
+
+      account.avatar = result.avatar
+      account.firstName = result.firstName
+      account.lastName = result.lastName
+      account.email = result.email
+      account.createdAt = result.createdAt
+    })
+}
 
 const handleHoverAvatar = () => {
   showAvatarEditIcon.value = true
@@ -85,4 +106,34 @@ const handleLogout = () => {
       loading.value = false
     })
 }
+
+const handleAvatarClick = () => {
+  if (blockAvatar.value) return
+
+  filePicker.value?.pickFiles()
+}
+
+const handleUploadAvatar = () => {
+  blockAvatar.value = true
+
+  uploadAvatar(avatar.value)
+    .then((error) => {
+      if (!error) {
+        getAccountData()
+      }
+    })
+}
+
+getAccountData()
 </script>
+
+<style
+  lang="scss"
+  scoped
+>
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+</style>
