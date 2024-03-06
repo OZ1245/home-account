@@ -26,7 +26,10 @@
 
     <p class="text-body1"><strong>Дата регистрации:</strong> {{ account.createdAt }}</p>
 
-    <q-btn>Exit</q-btn>
+    <q-btn
+      @click="handleLogout"
+      :loading="loading"
+    >Logout</q-btn>
   </q-page>
 </template>
 
@@ -35,7 +38,11 @@
   setup
 >
 import { fetchAccountData } from 'src/supabase/account'
+import { logout } from 'src/supabase/auth'
 import { ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 let account = reactive({
   avatar: null,
@@ -45,6 +52,7 @@ let account = reactive({
   createdAt: null
 })
 const showAvatarEditIcon = ref<boolean>(false)
+const loading = ref<boolean>(false)
 
 fetchAccountData()
   .then((result) => {
@@ -63,5 +71,18 @@ const handleHoverAvatar = () => {
 
 const handleLeaveAvatar = () => {
   showAvatarEditIcon.value = false
+}
+
+const handleLogout = () => {
+  loading.value = true
+
+  logout()
+    .then((error) => {
+      if (!error) {
+        router.push({ name: 'AccountLogin' })
+      }
+
+      loading.value = false
+    })
 }
 </script>

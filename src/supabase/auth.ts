@@ -114,3 +114,13 @@ export const updatePassword = async (password: string): Promise<any> => {
     throw message
   })
 }
+
+export const logout = async (): Promise<any> => {
+  return await supabase.auth.signOut()
+    .then(({ error }) => {
+      return error
+    })
+    .catch(({ message }) => {
+      throw message
+    })
+}
