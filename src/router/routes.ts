@@ -14,6 +14,16 @@ const routes: RouteRecordRaw[] = [
         name: 'AccountRegistration',
         path: 'registration',
         component: () => import('pages/auth/HaRegistration.vue')
+      },
+      {
+        name: 'AccountResetPassword',
+        path: 'reset-password',
+        component: () => import('pages/auth/HaResetPassword.vue')
+      },
+      {
+        name: 'AccountUpdatePassword',
+        path: 'update-password',
+        component: () => import('pages/auth/HaUpdatePassword.vue')
       }
     ]
   },

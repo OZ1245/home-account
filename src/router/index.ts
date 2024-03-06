@@ -35,7 +35,7 @@ export default route(function (/* { store, ssrContext } */) {
   });
 
   Router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.auth) && !LocalStorage.getItem('homeAccount/token')) {
+    if (to.matched.some(record => record.meta.auth) && !LocalStorage.getItem('sb-127-auth-token')) {
       next({ name: 'AccountLogin', query: { next: to.fullPath } })
     } else {
       next()

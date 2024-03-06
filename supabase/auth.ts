@@ -9,6 +9,8 @@ interface INewAccountData {
   lastName?: string
 }
 
+const url = process.env.VUE_APP_BASE_URL
+
 export const registration = async ({ email, password, firstName, lastName }: ISignUp): Promise<any> => {
   return await supabase.auth.signUp({
     email,
@@ -64,12 +66,44 @@ export const login = async ({ email, password }: ILogin): Promise<any> => {
     password
   })
   .then(({ data, error }) => {
-    console.log('login response data:', data);
-    LocalStorage.set('homeAccount/token', data.session?.access_token)
-
     if (error) {
       Notify.create({
         message: error.message,
+        type: 'negative'
+      })
+    }
+
+    return error
+  })
+  .catch(({ message }) => {
+    throw message
+  })
+}
+
+export const resetPassword = async (email: string): Promise<any> => {
+  return await supabase.auth.resetPasswordForEmail(
+    email,
+    { redirectTo: `${url}/auth/update-password` }
+  )
+  .then(({ error, data }) => {
+    console.log('resetPassword request data:', data);
+
+    return error
+  })
+  .catch(({ message }) => {
+    throw message
+  })
+}
+
+export const updatePassword = async (password: string): Promise<any> => {
+  return await supabase.auth.updateUser(
+    { password },
+    { emailRedirectTo: url }
+  )
+  .then(({ error }) => {
+    if (error) {
+      Notify.create({
+        message: 'Новый пароль не должен совпадать со старым.',
         type: 'negative'
       })
     }

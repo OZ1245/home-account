@@ -8,7 +8,7 @@
               <div class="q-mb-xl">
                 <div class="flex justify-center">
                   <div class="text-h4 text-uppercase q-my-none text-weight-bold text-primary fredoka">
-                    Login</div>
+                    Update password</div>
                 </div>
               </div>
 
@@ -17,15 +17,18 @@
                 @submit="submit"
               >
                 <q-input
-                  v-model="form.email"
-                  label="Email"
-                  name="Email"
+                  v-model="form.password"
+                  label="Password"
+                  name="Password"
+                  :error="error"
+                  type="password"
                 />
 
                 <q-input
-                  v-model="form.password"
-                  label="Password"
-                  name="password"
+                  v-model="form.passwordRepeat"
+                  label="Repeat Password"
+                  name="RepeatPassword"
+                  :error="error"
                   type="password"
                 />
 
@@ -33,23 +36,22 @@
                   <q-btn
                     class="full-width fredoka"
                     color="primary"
-                    label="Login"
+                    label="Update"
                     rounded
                     type="submit"
                   ></q-btn>
 
                   <div class="q-mt-lg">
                     <div class="q-mt-sm">
-                      Don't have an account yet?
+                      <router-link
+                        class="text-primary"
+                        :to="{ name: 'AccountLogin' }"
+                      >Login</router-link>
+                      or
                       <router-link
                         class="text-primary"
                         :to="{ name: 'AccountRegistration' }"
-                      >Register</router-link>.
-                      Забыли пароль?
-                      <router-link
-                        class="text-primary"
-                        :to="{ name: 'AccountResetPassword' }"
-                      >Reset</router-link>.
+                      >Register</router-link>
                     </div>
                   </div>
                 </div>
@@ -66,26 +68,53 @@
   setup
   lang="ts"
 >
-import { login } from 'app/supabase/auth';
+import { updatePassword } from 'app/supabase/auth';
+import { useQuasar } from 'quasar';
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router';
 
-import { ILogin } from 'src/@types/supabase_auth';
-
+const $q = useQuasar()
 const router = useRouter()
 
-const form = reactive<ILogin>({
-  email: '',
-  password: ''
+const form = reactive({
+  password: '',
+  passwordRepeat: ''
 })
 const loading = ref<boolean>(false)
+const error = ref<boolean>(false)
 
 const submit = () => {
   loading.value = true
+  error.value = false
 
-  login(form)
+  if (!form.password.length) {
+    $q.notify({
+      message: 'Введите новый пароль',
+      type: 'negative'
+    })
+    error.value = true
+
+    return
+  }
+
+  if (form.password !== form.passwordRepeat) {
+    $q.notify({
+      message: 'Пароли не совпадают',
+      type: 'negative'
+    })
+    error.value = true
+
+    return
+  }
+
+  updatePassword(form.password)
     .then((error) => {
       if (!error) {
+        $q.notify({
+          message: 'Пароль успешно обновлен.',
+          type: 'positive'
+        })
+
         router.push('/')
       }
 

@@ -8,7 +8,7 @@
               <div class="q-mb-xl">
                 <div class="flex justify-center">
                   <div class="text-h4 text-uppercase q-my-none text-weight-bold text-primary fredoka">
-                    Login</div>
+                    Reset password</div>
                 </div>
               </div>
 
@@ -17,39 +17,31 @@
                 @submit="submit"
               >
                 <q-input
-                  v-model="form.email"
+                  v-model="email"
                   label="Email"
                   name="Email"
-                />
-
-                <q-input
-                  v-model="form.password"
-                  label="Password"
-                  name="password"
-                  type="password"
                 />
 
                 <div>
                   <q-btn
                     class="full-width fredoka"
                     color="primary"
-                    label="Login"
+                    label="Reset"
                     rounded
                     type="submit"
                   ></q-btn>
 
                   <div class="q-mt-lg">
                     <div class="q-mt-sm">
-                      Don't have an account yet?
+                      <router-link
+                        class="text-primary"
+                        :to="{ name: 'AccountLogin' }"
+                      >Login</router-link>
+                      or
                       <router-link
                         class="text-primary"
                         :to="{ name: 'AccountRegistration' }"
-                      >Register</router-link>.
-                      Забыли пароль?
-                      <router-link
-                        class="text-primary"
-                        :to="{ name: 'AccountResetPassword' }"
-                      >Reset</router-link>.
+                      >Register</router-link>
                     </div>
                   </div>
                 </div>
@@ -66,27 +58,25 @@
   setup
   lang="ts"
 >
-import { login } from 'app/supabase/auth';
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router';
+import { resetPassword } from 'app/supabase/auth';
+import { useQuasar } from 'quasar';
+import { ref } from 'vue'
 
-import { ILogin } from 'src/@types/supabase_auth';
+const $q = useQuasar()
 
-const router = useRouter()
-
-const form = reactive<ILogin>({
-  email: '',
-  password: ''
-})
+const email = ref<string>('')
 const loading = ref<boolean>(false)
 
 const submit = () => {
   loading.value = true
 
-  login(form)
+  resetPassword(email.value)
     .then((error) => {
       if (!error) {
-        router.push('/')
+        $q.notify({
+          message: 'На указанную вами почту направлено письмо ссылкой для сброса пароля.',
+          type: 'positive'
+        })
       }
 
       loading.value = false
