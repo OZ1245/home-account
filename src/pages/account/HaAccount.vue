@@ -69,7 +69,7 @@
 
     <p class="text-subtitle">{{ account.email }}</p>
 
-    <p class="text-body1"><strong>Дата регистрации:</strong> {{ account.createdAt }}</p>
+    <p class="text-body1"><strong>Дата регистрации:</strong> {{ formatedCreatedAt }}</p>
 
     <q-btn
       @click="handleLogout"
@@ -82,11 +82,13 @@
   lang="ts"
   setup
 >
+import { ref, reactive, computed } from 'vue';
+import { useRouter } from 'vue-router';
+
 import { updateAccount } from 'src/supabase/account'
 import { logout } from 'src/supabase/auth'
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
 import { useFiles } from 'src/composables/account'
+import * as dayjs from 'dayjs'
 
 const router = useRouter()
 const { getFullAccountData, uploadAvatar } = useFiles()
@@ -106,6 +108,10 @@ const editName = ref<boolean>(false)
 const formName = reactive({
   firstName: account.firstName,
   lastName: account.lastName
+})
+
+const formatedCreatedAt = computed((): string => {
+  return dayjs(account.createdAt).format('DD.MM.YYYY HH:mm')
 })
 
 const getAccountData = () => {
