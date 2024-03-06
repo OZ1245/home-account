@@ -4,21 +4,21 @@
       size="100px"
       color="primary"
       text-color="white"
-      class="justify-center items-center"
-      @mousemove="handleHoverAvatar"
-      @mouseleave="handleLeaveAvatar"
+      class="justify-center items-center avatar"
+      title="Редактировать"
       @click="handleAvatarClick"
     >
       <q-icon
-        v-show="showAvatarEditIcon && !blockAvatar"
+        v-show="!blockAvatar"
         name="edit"
+        class="avatar__edit-icon"
       />
 
       <img
         v-if="account.avatar"
         :src="account.avatar"
         :alt="`${account.firstName} ${account.lastName}`"
-        class="avatar"
+        class="avatar__img"
       >
     </q-avatar>
 
@@ -65,7 +65,6 @@ let account = reactive({
   email: '',
   createdAt: null
 })
-const showAvatarEditIcon = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const avatar = ref<File | null>(null)
 const filePicker = ref<HTMLElement | null>(null)
@@ -132,8 +131,29 @@ getAccountData()
   scoped
 >
 .avatar {
+  position: relative;
+  cursor: pointer;
+
+  &:hover .avatar__edit-icon {
+    opacity: 1;
+    transition: opacity .15s;
+  }
+}
+
+.avatar__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.avatar__edit-icon {
+  opacity: 0;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  transition: opacity .3s;
 }
 </style>
