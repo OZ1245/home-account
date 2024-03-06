@@ -32,7 +32,40 @@
       @update:model-value="handleUploadAvatar"
     />
 
-    <h2>{{ account.firstName }} {{ account.lastName }}</h2>
+    <div class="account-name row justify-center">
+      <h2 v-show="!editName">{{ account.firstName }} {{ account.lastName }}
+        <q-btn
+          flat
+          icon="edit"
+          size="md"
+          color="primary"
+          @click="handelClickEditName"
+        />
+      </h2>
+
+      <q-form
+        v-if="editName"
+        class="account-name__form row justify-around q-pa-md"
+        @submit="handleSubmitName"
+      >
+        <q-input
+          v-model="formName.firstName"
+          label="First Name"
+          name="First Name"
+        />
+        <q-input
+          v-model="formName.lastName"
+          label="Last Name"
+          name="Last Name"
+        />
+        <q-btn
+          color="primary"
+          icon="done"
+          type="submit"
+          size="md"
+        />
+      </q-form>
+    </div>
 
     <p class="text-subtitle">{{ account.email }}</p>
 
@@ -49,7 +82,7 @@
   lang="ts"
   setup
 >
-import { fetchAccountData } from 'src/supabase/account'
+import { updateAccount } from 'src/supabase/account'
 import { logout } from 'src/supabase/auth'
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
@@ -69,6 +102,11 @@ const loading = ref<boolean>(false)
 const avatar = ref<File | null>(null)
 const filePicker = ref<HTMLElement | null>(null)
 const blockAvatar = ref<boolean>(false)
+const editName = ref<boolean>(false)
+const formName = reactive({
+  firstName: account.firstName,
+  lastName: account.lastName
+})
 
 const getAccountData = () => {
   getFullAccountData()
@@ -83,14 +121,6 @@ const getAccountData = () => {
       account.email = result.email
       account.createdAt = result.createdAt
     })
-}
-
-const handleHoverAvatar = () => {
-  showAvatarEditIcon.value = true
-}
-
-const handleLeaveAvatar = () => {
-  showAvatarEditIcon.value = false
 }
 
 const handleLogout = () => {
@@ -120,6 +150,24 @@ const handleUploadAvatar = () => {
       if (!error) {
         getAccountData()
       }
+    })
+}
+
+const handelClickEditName = () => {
+  editName.value = true
+}
+
+const handleSubmitName = () => {
+  console.log('-- handleSubmitName ---');
+
+  updateAccount({
+    first_name: formName.firstName,
+    last_name: formName.lastName
+  })
+    .then(() => {
+      getAccountData()
+
+      editName.value = false
     })
 }
 
@@ -155,5 +203,13 @@ getAccountData()
   transform: translate(-50%, -50%);
 
   transition: opacity .3s;
+}
+
+.account-name {
+  width: 100%;
+}
+
+.account-name__form {
+  width: 100%;
 }
 </style>
