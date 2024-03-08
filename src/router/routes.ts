@@ -36,6 +36,17 @@ const routes: RouteRecordRaw[] = [
         name: 'Account',
         path: 'account',
         component: () => import('pages/account/HaAccount.vue')
+      },
+      {
+        path: 'finances',
+        component: () => import('layouts/Finances.vue'),
+        children: [
+          {
+            name: 'FinancesPlan',
+            path: 'plan',
+            component: () => import('pages/finances/HaFinancesPlan.vue')
+          }
+        ]
       }
     ],
     meta: {

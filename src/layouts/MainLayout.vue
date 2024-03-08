@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
         <q-btn
@@ -24,12 +24,9 @@
       :mini="!leftDrawerOpen || miniState"
       show-if-above
       bordered
+      :width="250"
     >
       <q-list>
-        <!-- <q-item-label header>
-          Essential Links
-        </q-item-label> -->
-
         <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
