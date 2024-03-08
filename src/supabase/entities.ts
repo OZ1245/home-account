@@ -15,7 +15,7 @@ interface IEntity {
 
 const authData = JSON.parse(LocalStorage.getItem('sb-127-auth-token') as string)
 
-export const fetchEntity = async (date: string) => {
+export const fetchEntity = async (date: string): Promise<IEntity | any> => {
   return await supabase.from('entities')
     .select('*')
     .eq('owner', authData.user.id)
@@ -23,14 +23,14 @@ export const fetchEntity = async (date: string) => {
     .then((response) => response)
 }
 
-export const fetchEntities = async () => {
+export const fetchEntities = async (): Promise<IEntity[] | any> => {
   return await supabase.from('entities')
     .select('*')
     .eq('owner', authData.user.id)
     .then((response) => response)
 }
 
-export const addEntity = async (payload: IAddEntity) => {
+export const addEntity = async (payload: IAddEntity): Promise<IEntity[] | any> => {
   return await supabase.from('entity')
     .upsert({
       ...payload,
@@ -39,14 +39,14 @@ export const addEntity = async (payload: IAddEntity) => {
     .select()
 }
 
-export const updateEntity = async (payload: IUpdateEntity) => {
+export const updateEntity = async (payload: IUpdateEntity): Promise<IEntity | any> => {
   return await supabase.from('entity')
     .update(payload)
     .eq('owner', authData.user.id)
     .select()
 }
 
-export const deleteEntity = async (uuid: string) => {
+export const deleteEntity = async (uuid: string): Promise<any> => {
   return await supabase.from('entity')
     .delete()
     .eq('uuid', uuid)
