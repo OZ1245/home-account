@@ -74,11 +74,9 @@
 >
 import { computed, ref, reactive } from 'vue';
 import dayjs, { Dayjs } from 'dayjs';
-
 import HaCalendar from 'src/components/HaCalendar.vue'
 import HaMonthPickerDialog from 'src/components/dialogs/HaMonthPickerDialog.vue';
-
-import { ICalendarProps } from 'src/@types/components';
+import { ICalendarProps } from 'src/@types/components'
 
 const budgetForm = reactive<{
   prepayment: number,
@@ -98,9 +96,11 @@ const totalSalary = computed((): number => (
   budgetForm.prepayment + budgetForm.wage
 ))
 const calendarProps = computed((): ICalendarProps => ({
-  month: dayjs(date.value).month(),
-  year: dayjs(date.value).year()
+  date: dayjs(date.value).toDate()
 }))
+// const calendarProps = computed(() => ({
+//   showDate: dayjs(date.value).toDate()
+// }))
 
 const handleChangeDate = () => {
   showMonthPicker.value = true
