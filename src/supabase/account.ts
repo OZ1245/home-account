@@ -1,6 +1,5 @@
 import { LocalStorage } from "quasar";
 import { supabase } from "./client";
-import { getObjectUrl } from './storage'
 import { IUploadAvatar } from 'src/@types/supabase_account'
 
 interface IUpdateAccount {
@@ -32,8 +31,6 @@ export const uploadAvatar = async ({ fileName, file }: IUploadAvatar): Promise<a
 }
 
 export const updateAccount = async (payload: IUpdateAccount): Promise<any> => {
-  console.log('payload:', payload);
-
   return await supabase.from('account')
     .update(payload)
     .eq('user_id', authData.user.id)
