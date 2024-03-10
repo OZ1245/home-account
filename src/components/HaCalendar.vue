@@ -7,6 +7,7 @@
       :show-date="props.date"
       :starting-day-of-week="1"
       class="calendar__overview"
+      @click-date="handleClickDay"
     >
       <!-- <template #day-header="props">
         [day-header slot]
@@ -14,8 +15,18 @@
       </template> -->
 
       <template #day-content="{ day }">
-        <!-- <pre>{{ props }}</pre> -->
         <div class="calendar__day-content">
+          <q-chip
+            v-for="(entity, i) in getEntities(day)"
+            :key="`entity-chip-${i}`"
+            square
+            color="yellow"
+            text-color="black"
+            size="sm"
+            class="calendar__entity"
+          >
+            {{ entity.name }} ({{ entity.amount }})
+          </q-chip>
         </div>
       </template>
     </calendar-view>
@@ -27,13 +38,28 @@
   setup
 >
 import { ref, defineProps, computed } from 'vue'
-import { ICalendarProps } from 'src/@types/components';
+import { ICalendarProps, } from 'src/@types/components';
 import { CalendarView } from 'vue-simple-calendar';
 import "vue-simple-calendar/dist/style.css"
+import dayjs from 'dayjs';
 
 const props = defineProps<ICalendarProps>()
 
+const emits = defineEmits<{
+  (e: 'clickDay', value: Date): void
+}>()
+
 const rootElement = ref<HTMLElement | null>(null)
+
+const handleClickDay = (date: Date) => {
+  emits('clickDay', date);
+}
+
+const getEntities = (day: Date) => {
+  return props.entities.filter((entity) => {
+    return dayjs(entity.date).isSame(dayjs(day), 'day')
+  })
+}
 </script>
 
 <style lang="scss">
@@ -88,17 +114,19 @@ const rootElement = ref<HTMLElement | null>(null)
   height: 100%;
 
   position: relative;
+
+  overflow: hidden;
 }
 
 .calendar__day-wrap:after,
 .cv-day:after {
   display: none;
 
-  content: "\e145";
+  content: "\e3c9";
   font-family: "Material Icons";
   font-size: 48px;
   line-height: 1;
-  color: $primary;
+  color: $green;
 
   position: absolute;
   top: 50%;
@@ -107,9 +135,8 @@ const rootElement = ref<HTMLElement | null>(null)
 }
 
 .calendar__day--not-current,
-.cv-day.outsideOfMonth,
-{
-background: $blue-grey-1;
+.cv-day.outsideOfMonth {
+  background: $blue-grey-1;
 }
 
 .calendar__number,

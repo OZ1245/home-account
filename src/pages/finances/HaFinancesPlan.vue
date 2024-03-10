@@ -57,15 +57,27 @@
 
     <div class="row">
       <div class="col">
-        <ha-calendar v-bind="calendarProps"></ha-calendar>
+        <ha-calendar
+          v-bind="calendarProps"
+          @click-day="handelClickDay"
+        ></ha-calendar>
       </div>
     </div>
   </q-page>
 
   <ha-month-picker-dialog
-    v-model:date="date"
-    v-model:show="showMonthPicker"
+    v-model="showMonthPicker"
+    :date="date"
+    @apply="handleApplyCurrentDate"
   ></ha-month-picker-dialog>
+
+  <ha-entities-dialog
+    v-model="showEntitiesDialog"
+    :date="selectedDate"
+    :entities="dayEntities"
+    @update-entities="handleUpdateEntities"
+    @add-entities="handleAddEntities"
+  ></ha-entities-dialog>
 </template>
 
 <script
@@ -76,7 +88,10 @@ import { computed, ref, reactive } from 'vue';
 import dayjs, { Dayjs } from 'dayjs';
 import HaCalendar from 'src/components/HaCalendar.vue'
 import HaMonthPickerDialog from 'src/components/dialogs/HaMonthPickerDialog.vue';
+import HaEntitiesDialog from 'src/components/dialogs/HaEntitiesDialog.vue';
 import { ICalendarProps } from 'src/@types/components'
+import { IAddEntity, IEntity } from 'src/@types/supabase_entity';
+import { addEntity, fetchEntityByDate, fetchEntitiesByPeriod } from 'src/supabase/entities';
 
 const budgetForm = reactive<{
   prepayment: number,
@@ -87,24 +102,62 @@ const budgetForm = reactive<{
 })
 const date = ref<Dayjs>(dayjs())
 const showMonthPicker = ref<boolean>(false)
+const showEntitiesDialog = ref<boolean>(false)
+const selectedDate = ref<Date | null>(null)
+const monthEntities = ref<IEntity[] | any>([])
+const dayEntities = ref<IEntity[] | any>([])
 
 const displayDate = computed(() => ({
-  month: dayjs(date.value).format('MMMM'),
-  year: dayjs(date.value).format('YYYY')
+  month: date.value.format('MMMM'),
+  year: date.value.format('YYYY')
 }))
 const totalSalary = computed((): number => (
   budgetForm.prepayment + budgetForm.wage
 ))
 const calendarProps = computed((): ICalendarProps => ({
-  date: dayjs(date.value).toDate()
+  date: date.value.toDate(),
+  entities: monthEntities.value
 }))
-// const calendarProps = computed(() => ({
-//   showDate: dayjs(date.value).toDate()
-// }))
 
 const handleChangeDate = () => {
   showMonthPicker.value = true
 }
+const handleApplyCurrentDate = (e: Date) => {
+  date.value = dayjs(e)
+}
+const handelClickDay = (date: Date) => {
+  showEntitiesDialog.value = true
+  selectedDate.value = date
+
+  fetchEntityByDate(dayjs(date).format('YYYY-MM-DD'))
+    .then(({ data }) => {
+      dayEntities.value = data
+    })
+}
+const handleAddEntities = (entities: IAddEntity[]) => {
+  console.log('--- handleAddEntities ---');
+  console.log('entities:', entities);
+
+  Promise.all(entities.map((item) => {
+    console.log('item:', item);
+    addEntity(item)
+      .then((result) => {
+        console.log('result:', result);
+      })
+  }))
+}
+
+const getEntities = () => {
+  fetchEntitiesByPeriod({
+    start: date.value.startOf('month').toISOString(),
+    end: date.value.endOf('month').toISOString()
+  })
+    .then(({ data }) => {
+      monthEntities.value = data
+    })
+}
+
+getEntities()
 </script>
 
 <style lang="scss"></style>

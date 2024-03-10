@@ -1,37 +1,32 @@
 import { LocalStorage } from "quasar";
 import { supabase } from "./client";
-import { IAddEntity, IUpdateEntity } from 'src/@types/supabase_entity'
-
-interface IEntity {
-  uuid: string
-  created_at: string
-  updated_at: string
-  date: string
-  name: string
-  amount: number
-  note: string
-  owner: string
-}
+import { IEntity, IAddEntity, IUpdateEntity } from 'src/@types/supabase_entity'
+import { IPeriod } from 'src/@types/common'
 
 const authData = JSON.parse(LocalStorage.getItem('sb-127-auth-token') as string)
 
-export const fetchEntity = async (date: string): Promise<IEntity | any> => {
+export const fetchEntityByDate = async (date: string): Promise<IEntity | any> => {
   return await supabase.from('entities')
     .select('*')
     .eq('owner', authData.user.id)
     .eq('date', date)
-    .then((response) => response)
 }
 
 export const fetchEntities = async (): Promise<IEntity[] | any> => {
   return await supabase.from('entities')
     .select('*')
     .eq('owner', authData.user.id)
-    .then((response) => response)
+}
+
+export const fetchEntitiesByPeriod = async ({ start, end }: IPeriod): Promise<IEntity[] | any> => {
+  return await supabase.from('entities')
+    .select('*')
+    .gte('date', start)
+    .lte('date', end)
 }
 
 export const addEntity = async (payload: IAddEntity): Promise<IEntity[] | any> => {
-  return await supabase.from('entity')
+  return await supabase.from('entities')
     .upsert({
       ...payload,
       owner: authData.user.id
@@ -40,14 +35,14 @@ export const addEntity = async (payload: IAddEntity): Promise<IEntity[] | any> =
 }
 
 export const updateEntity = async (payload: IUpdateEntity): Promise<IEntity | any> => {
-  return await supabase.from('entity')
+  return await supabase.from('entities')
     .update(payload)
     .eq('owner', authData.user.id)
     .select()
 }
 
 export const deleteEntity = async (uuid: string): Promise<any> => {
-  return await supabase.from('entity')
+  return await supabase.from('entities')
     .delete()
     .eq('uuid', uuid)
 }
