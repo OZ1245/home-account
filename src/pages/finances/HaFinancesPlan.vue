@@ -75,8 +75,7 @@
     v-model="showEntitiesDialog"
     :date="selectedDate"
     :entities="dayEntities"
-    @update-entities="handleUpdateEntities"
-    @add-entities="handleAddEntities"
+    @save="handleAddEntities"
   ></ha-entities-dialog>
 </template>
 
@@ -90,8 +89,8 @@ import HaCalendar from 'src/components/HaCalendar.vue'
 import HaMonthPickerDialog from 'src/components/dialogs/HaMonthPickerDialog.vue';
 import HaEntitiesDialog from 'src/components/dialogs/HaEntitiesDialog.vue';
 import { ICalendarProps } from 'src/@types/components'
-import { IAddEntity, IEntity } from 'src/@types/supabase_entity';
-import { addEntity, fetchEntityByDate, fetchEntitiesByPeriod } from 'src/supabase/entities';
+import { IEntity } from 'src/@types/supabase_entity';
+import { updateEntity, fetchEntityByDate, fetchEntitiesByPeriod } from 'src/supabase/entities';
 
 const budgetForm = reactive<{
   prepayment: number,
@@ -103,7 +102,7 @@ const budgetForm = reactive<{
 const date = ref<Dayjs>(dayjs())
 const showMonthPicker = ref<boolean>(false)
 const showEntitiesDialog = ref<boolean>(false)
-const selectedDate = ref<Date | null>(null)
+const selectedDate = ref<string>('')
 const monthEntities = ref<IEntity[] | any>([])
 const dayEntities = ref<IEntity[] | any>([])
 
@@ -126,25 +125,22 @@ const handleApplyCurrentDate = (e: Date) => {
   date.value = dayjs(e)
 }
 const handelClickDay = (date: Date) => {
-  showEntitiesDialog.value = true
-  selectedDate.value = date
+  const datestring = dayjs(date).format('YYYY-MM-DD')
+  selectedDate.value = datestring
 
-  fetchEntityByDate(dayjs(date).format('YYYY-MM-DD'))
+  fetchEntityByDate(datestring)
     .then(({ data }) => {
+      console.log('data:', data)
       dayEntities.value = data
+      showEntitiesDialog.value = true
     })
 }
-const handleAddEntities = (entities: IAddEntity[]) => {
-  console.log('--- handleAddEntities ---');
-  console.log('entities:', entities);
-
+const handleAddEntities = (entities: IEntity[]) => {
   Promise.all(entities.map((item) => {
-    console.log('item:', item);
-    addEntity(item)
-      .then((result) => {
-        console.log('result:', result);
-      })
+    return updateEntity(item)
+      .then((result) => result.data)
   }))
+    .then(() => getEntities())
 }
 
 const getEntities = () => {

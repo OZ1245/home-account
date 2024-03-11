@@ -81,24 +81,23 @@
 >
 import dayjs from 'dayjs';
 import { IAddEntity, IEntity, IUpdateEntity } from 'src/@types/supabase_entity';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 const props = defineProps<{
   modelValue: boolean,
-  date: Date | null,
+  date: string,
   entities?: IEntity[]
 }>()
 
 const emits = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
-  (e: 'addEntities', value: IAddEntity[]): void
-  (e: 'updateEntities', value: IUpdateEntity[]): void
+  (e: 'save', value: IEntity[]): void
 }>()
 
 const initForm = reactive<{
   date: string
   name: string
-  amount: number | null
+  amount: string | null
   note: string
 }>({
   date: '',
@@ -106,13 +105,23 @@ const initForm = reactive<{
   amount: null,
   note: ''
 })
-const entities = ref<IAddEntity[]>([])
-const editMode = ref<boolean>(false)
+const entities = ref<IEntity[]>([])
 
 const isShow = computed((): boolean => props.modelValue)
 const formatedDate = computed((): string => (
   (props.date) ? dayjs(props.date).format('DD MMM YYYY') : ''
 ))
+
+watch(
+  () => props.modelValue,
+  () => {
+    initForm.date = (props.date)
+      ? props.date
+      : dayjs(new Date()).format('YYYY-MM-DD')
+
+    entities.value = props.entities || []
+  }
+)
 
 const handleHideModal = () => {
   emits('update:modelValue', false)
@@ -121,11 +130,7 @@ const handleCancel = () => {
   emits('update:modelValue', false)
 }
 const handleDone = () => {
-  if (editMode.value) {
-    emits('addEntities', entities.value)
-  } else {
-    emits('addEntities', entities.value)
-  }
+  emits('save', entities.value)
   entities.value = []
   emits('update:modelValue', false)
 }
@@ -137,15 +142,4 @@ const handleAddEntity = () => {
     note: initForm.note,
   })
 }
-
-onMounted(() => {
-  initForm.date = (props.date)
-    ? dayjs(props.date).toISOString()
-    : dayjs(new Date()).toISOString()
-
-  if (props.entities) {
-    entities.value = props.entities
-    editMode.value = true
-  }
-})
 </script>

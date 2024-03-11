@@ -1,12 +1,12 @@
 export interface IEntity {
-  uuid: string
-  created_at: string
-  updated_at: string
-  date: string
-  name: string
-  amount: number
-  note: string
-  owner: string
+  readonly uuid?: string
+  readonly created_at?: string
+  updated_at?: string
+  date?: string // YYYY-MM-DD
+  name?: string
+  amount?: string | null
+  note?: string
+  owner?: string
 }
 
 export interface IAddEntity {

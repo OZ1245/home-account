@@ -69,8 +69,8 @@ const getEntities = (day: Date) => {
 }
 
 .cv-week {
-  min-height: 120px;
-  max-height: 120px;
+  min-height: 110px;
+  // max-height: 120px;
 }
 
 .calendar__week-day,

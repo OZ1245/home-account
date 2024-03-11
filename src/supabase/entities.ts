@@ -25,19 +25,12 @@ export const fetchEntitiesByPeriod = async ({ start, end }: IPeriod): Promise<IE
     .lte('date', end)
 }
 
-export const addEntity = async (payload: IAddEntity): Promise<IEntity[] | any> => {
+export const updateEntity = async (payload: IEntity): Promise<IEntity[] | any> => {
   return await supabase.from('entities')
     .upsert({
       ...payload,
       owner: authData.user.id
     })
-    .select()
-}
-
-export const updateEntity = async (payload: IUpdateEntity): Promise<IEntity | any> => {
-  return await supabase.from('entities')
-    .update(payload)
-    .eq('owner', authData.user.id)
     .select()
 }
 
