@@ -62,6 +62,8 @@ const emits = defineEmits<{
 const rootElement = ref<HTMLElement | null>(null)
 
 const handleClickDay = (date: Date) => {
+  if (dayjs(date).month() !== dayjs(props.date).month()) return
+
   emits('clickDay', date);
 }
 
