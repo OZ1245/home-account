@@ -16,17 +16,27 @@
 
       <template #day-content="{ day }">
         <div class="calendar__day-content">
-          <q-chip
-            v-for="(entity, i) in getEntities(day)"
-            :key="`entity-chip-${i}`"
-            square
-            color="yellow"
-            text-color="black"
-            size="sm"
-            class="calendar__entity"
-          >
-            {{ entity.name }} ({{ entity.amount }})
-          </q-chip>
+          <template v-for="(entity, i) in getEntities(day)">
+            <q-chip
+              v-if="i < 3"
+              :key="`entity-chip-${i}`"
+              square
+              color="yellow"
+              text-color="black"
+              size="sm"
+              class="calendar__entity"
+            >
+              {{ entity.name }} ({{ entity.amount }})
+            </q-chip>
+            <q-chip
+              v-if="i === 3"
+              :key="`entity-chip-${i}`"
+              square
+              text-color="black"
+              size="xs"
+              class="calendar__entity calendar__entity--dots"
+            >...</q-chip>
+          </template>
         </div>
       </template>
     </calendar-view>
@@ -56,9 +66,9 @@ const handleClickDay = (date: Date) => {
 }
 
 const getEntities = (day: Date) => {
-  return props.entities.filter((entity) => {
+  return props.entities?.filter((entity) => {
     return dayjs(entity.date).isSame(dayjs(day), 'day')
-  })
+  }) || []
 }
 </script>
 
@@ -69,8 +79,8 @@ const getEntities = (day: Date) => {
 }
 
 .cv-week {
-  min-height: 110px;
-  // max-height: 120px;
+  min-height: 140px;
+  max-height: 120px;
 }
 
 .calendar__week-day,
@@ -153,9 +163,28 @@ const getEntities = (day: Date) => {
 
 .calendar__day--today .calendar__number,
 .cv-day.today .cv-day-number {
+  flex-shrink: 0;
+
   color: white;
 
   background-color: $red;
   border-radius: 50%;
+}
+
+.calendar__day-content {
+  display: block;
+
+  flex-shrink: 1;
+}
+
+.calendar__entity {
+  display: inline-block;
+  width: 100%;
+  margin-inline: 0;
+}
+
+.calendar__entity--dots {
+  width: auto;
+  margin-bottom: 0;
 }
 </style>
