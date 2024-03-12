@@ -34,6 +34,44 @@ export const updateEntity = async (payload: IEntity): Promise<IEntity[] | any> =
     .select()
 }
 
+export const updateEntities = async (payload: IEntity[]): Promise<IEntity[] | any> => {
+  let upsertPayload: IEntity[] = []
+  let insertPayload: IEntity[] = []
+
+  payload.map((entity) => {
+    if (entity.uuid) {
+      upsertPayload = [
+        ...upsertPayload,
+        {
+          ...entity,
+          owner: authData.user.id
+        }
+      ]
+    } else {
+      insertPayload = [
+        ...insertPayload,
+        {
+          ...entity,
+          owner: authData.user.id
+        }
+      ]
+    }
+  })
+
+  const upsertResponse = supabase.from('entities')
+    .upsert(upsertPayload)
+    .select()
+
+  const insertResponse = supabase.from('entities')
+    .insert(insertPayload)
+    .select()
+
+  Promise.all([upsertResponse, insertResponse])
+    .then((responses) => {
+      return responses
+    })
+}
+
 export const deleteEntity = async (uuid: string): Promise<any> => {
   return await supabase.from('entities')
     .delete()
