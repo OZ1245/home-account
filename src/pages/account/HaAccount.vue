@@ -32,50 +32,32 @@
       @update:model-value="handleUploadAvatar"
     />
 
-    <div class="account-name row justify-center">
-      <h2 v-show="!editName">{{ account.firstName }} {{ account.lastName }}
-        <q-btn
-          flat
-          icon="edit"
-          size="md"
-          color="primary"
-          @click="handelClickEditName"
-        />
-      </h2>
-
-      <q-form
-        v-if="editName"
-        class="account-name__form row justify-around q-pa-md"
-        @submit="handleSubmitName"
-      >
-        <q-input
-          v-model="formName.firstName"
-          label="First Name"
-          name="First Name"
-        />
-        <q-input
-          v-model="formName.lastName"
-          label="Last Name"
-          name="Last Name"
-        />
-        <q-btn
-          color="primary"
-          icon="done"
-          type="submit"
-          size="md"
-        />
-      </q-form>
-    </div>
+    <h2>{{ account.firstName }} {{ account.lastName }}
+      <q-btn
+        flat
+        icon="edit"
+        size="md"
+        color="primary"
+        @click="handelClickEditName"
+      />
+    </h2>
 
     <p class="text-subtitle">{{ account.email }}</p>
 
     <p class="text-body1"><strong>Дата регистрации:</strong> {{ formatedCreatedAt }}</p>
 
     <q-btn
+      color="primary"
       @click="handleLogout"
       :loading="loading"
     >Logout</q-btn>
   </q-page>
+
+  <ha-change-name-dialog
+    v-model="showChangeNameDialog"
+    v-bind="changeNameProps"
+    @submit="handleSubmitName"
+  />
 </template>
 
 <script
@@ -84,31 +66,35 @@
 >
 import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import dayjs from 'dayjs'
+
+import HaChangeNameDialog from 'src/components/dialogs/HaChangeNameDialog.vue';
 
 import { updateAccount } from 'src/supabase/account'
 import { logout } from 'src/supabase/auth'
-import { useFiles } from 'src/composables/account'
-import * as dayjs from 'dayjs'
+import { useAccount } from 'src/composables/account'
+import { IAccount, IAccountName } from 'src/@types/supabase_account';
 
 const router = useRouter()
-const { getFullAccountData, uploadAvatar } = useFiles()
+const { getFullAccountData, uploadAvatar } = useAccount()
 
-let account = reactive({
+const account = reactive<IAccount>({
   avatar: null,
   firstName: '',
   lastName: '',
   email: '',
-  createdAt: null
+  createdAt: ''
 })
 const loading = ref<boolean>(false)
 const avatar = ref<File | null>(null)
 const filePicker = ref<HTMLElement | null>(null)
 const blockAvatar = ref<boolean>(false)
 const editName = ref<boolean>(false)
-const formName = reactive({
+const changeNameProps = reactive<IAccountName>({
   firstName: account.firstName,
   lastName: account.lastName
 })
+const showChangeNameDialog = ref<boolean>(false)
 
 const formatedCreatedAt = computed((): string => {
   return dayjs(account.createdAt).format('DD.MM.YYYY HH:mm')
@@ -149,6 +135,7 @@ const handleAvatarClick = () => {
 }
 
 const handleUploadAvatar = () => {
+  if (!avatar.value) return
   blockAvatar.value = true
 
   uploadAvatar(avatar.value)
@@ -160,21 +147,17 @@ const handleUploadAvatar = () => {
 }
 
 const handelClickEditName = () => {
-  editName.value = true
+  showChangeNameDialog.value = true
 }
 
-const handleSubmitName = () => {
+const handleSubmitName = (data: IAccountName) => {
   console.log('-- handleSubmitName ---');
 
   updateAccount({
-    first_name: formName.firstName,
-    last_name: formName.lastName
+    first_name: data.firstName,
+    last_name: data.lastName
   })
-    .then(() => {
-      getAccountData()
-
-      editName.value = false
-    })
+    .then(() => getAccountData())
 }
 
 getAccountData()

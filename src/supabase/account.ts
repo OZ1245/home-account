@@ -1,6 +1,6 @@
 import { LocalStorage } from "quasar";
 import { supabase } from "./client";
-import { IUploadAvatar } from 'src/@types/supabase_account'
+import { IAccount, IUploadAvatar } from 'src/@types/supabase_account'
 
 interface IUpdateAccount {
   first_name?: string,
@@ -10,11 +10,10 @@ interface IUpdateAccount {
 
 const authData = JSON.parse(LocalStorage.getItem('sb-127-auth-token') as string)
 
-export const fetchAccountData = async () => {
+export const fetchAccountData = async (): Promise<IAccount | any> => {
   return await supabase.from('account')
     .select('*')
     .eq('user_id', authData.user.id)
-    .then((response) => response)
 }
 
 export const uploadAvatar = async ({ fileName, file }: IUploadAvatar): Promise<any> => {

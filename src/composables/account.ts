@@ -2,7 +2,7 @@ import { LocalStorage } from "quasar";
 import { uploadAvatar as apiUploadAvatar, updateAccount, fetchAccountData } from 'src/supabase/account'
 import { getObjectUrl } from 'src/supabase/storage'
 
-export function useFiles () {
+export function useAccount () {
   const authData = JSON.parse(LocalStorage.getItem('sb-127-auth-token') as string)
 
   const uploadAvatar = async (file: File) => {
