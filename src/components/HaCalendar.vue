@@ -80,13 +80,13 @@ const getEntities = (day: Date) => {
   border-collapse: collapse;
 }
 
-.cv-week {
+.calendar .cv-week {
   min-height: 140px;
   max-height: 120px;
 }
 
 .calendar__week-day,
-.cv-header-day {
+.calendar .cv-header-day {
   font-weight: 600;
   text-align: center;
 
@@ -98,8 +98,7 @@ const getEntities = (day: Date) => {
 }
 
 .calendar__day,
-.cv-day {
-  // border: 1px solid $blue-grey-2;
+.calendar .cv-day {
   padding: 6px;
   height: 120px;
 
@@ -107,19 +106,14 @@ const getEntities = (day: Date) => {
 }
 
 .calendar__day:not(.calendar__day--not-current):hover,
-.cv-day:not(.outsideOfMonth):hover {
+.calendar .cv-day:not(.outsideOfMonth):hover {
   cursor: pointer;
   background: $blue-1;
   transition: background-color .15s;
-
-  .calendar__day-wrap:after,
-  &:after {
-    display: inline-flex;
-  }
 }
 
 .calendar__day-wrap,
-.cv-day {
+.calendar .cv-day {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -130,29 +124,13 @@ const getEntities = (day: Date) => {
   overflow: hidden;
 }
 
-.calendar__day-wrap:after,
-.cv-day:after {
-  display: none;
-
-  content: "\e3c9";
-  font-family: "Material Icons";
-  font-size: 48px;
-  line-height: 1;
-  color: $green;
-
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 .calendar__day--not-current,
-.cv-day.outsideOfMonth {
+.calendar .cv-day.outsideOfMonth {
   background: $blue-grey-1;
 }
 
 .calendar__number,
-.cv-day-number {
+.calendar .cv-day-number {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -164,7 +142,7 @@ const getEntities = (day: Date) => {
 }
 
 .calendar__day--today .calendar__number,
-.cv-day.today .cv-day-number {
+.calendar .cv-day.today .cv-day-number {
   flex-shrink: 0;
 
   color: white;
@@ -188,5 +166,11 @@ const getEntities = (day: Date) => {
 .calendar__entity--dots {
   width: auto;
   margin-bottom: 0;
+}
+
+.calendar .q-chip__content {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: inline;
 }
 </style>
