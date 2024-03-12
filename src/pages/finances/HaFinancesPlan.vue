@@ -76,6 +76,8 @@
     :date="selectedDate"
     :entities="dayEntities"
     @save="handleAddEntities"
+    @remove-all="handleRemoveAllEntites"
+    @remove-entity="handleRemoveEntity"
   ></ha-entities-dialog>
 </template>
 
@@ -90,7 +92,7 @@ import HaMonthPickerDialog from 'src/components/dialogs/HaMonthPickerDialog.vue'
 import HaEntitiesDialog from 'src/components/dialogs/HaEntitiesDialog.vue';
 import { ICalendarProps } from 'src/@types/components'
 import { IEntity } from 'src/@types/supabase_entity';
-import { updateEntity, fetchEntityByDate, fetchEntitiesByPeriod } from 'src/supabase/entities';
+import { updateEntity, fetchEntityByDate, fetchEntitiesByPeriod, deleteEntities, deleteEntity } from 'src/supabase/entities';
 
 const budgetForm = reactive<{
   prepayment: number,
@@ -130,7 +132,6 @@ const handelClickDay = (date: Date) => {
 
   fetchEntityByDate(datestring)
     .then(({ data }) => {
-      console.log('data:', data)
       dayEntities.value = data
       showEntitiesDialog.value = true
     })
@@ -140,6 +141,14 @@ const handleAddEntities = (entities: IEntity[]) => {
     return updateEntity(item)
       .then((result) => result.data)
   }))
+    .then(() => getEntities())
+}
+const handleRemoveAllEntites = (uuidList: string[]) => {
+  deleteEntities(uuidList)
+    .then(() => getEntities())
+}
+const handleRemoveEntity = (uuid: string) => {
+  deleteEntity(uuid)
     .then(() => getEntities())
 }
 

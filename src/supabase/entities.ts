@@ -39,3 +39,9 @@ export const deleteEntity = async (uuid: string): Promise<any> => {
     .delete()
     .eq('uuid', uuid)
 }
+
+export const deleteEntities = async (uuidList: string[]): Promise<any> => {
+  return await supabase.from('entities')
+    .delete()
+    .in('uuid', uuidList)
+}
