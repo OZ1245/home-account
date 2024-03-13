@@ -86,8 +86,6 @@ export const resetPassword = async (email: string): Promise<any> => {
     { redirectTo: `${url}/auth/update-password` }
   )
   .then(({ error, data }) => {
-    console.log('resetPassword request data:', data);
-
     return error
   })
   .catch(({ message }) => {
@@ -115,6 +113,13 @@ export const updatePassword = async (password: string): Promise<any> => {
   })
 }
 
+export const verifyPassword = async (password: string): Promise<any> => {
+  return await supabase.rpc('verify_user_password', { password })
+    .then((response) => {
+      return response
+    })
+}
+
 export const logout = async (): Promise<any> => {
   return await supabase.auth.signOut()
     .then(({ error }) => {
@@ -124,3 +129,4 @@ export const logout = async (): Promise<any> => {
       throw message
     })
 }
+

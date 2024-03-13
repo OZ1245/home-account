@@ -46,11 +46,20 @@
 
     <p class="text-body1"><strong>Дата регистрации:</strong> {{ formatedCreatedAt }}</p>
 
-    <q-btn
-      color="primary"
-      @click="handleLogout"
-      :loading="loading"
-    >Logout</q-btn>
+    <div class="row q-gutter-md">
+      <q-btn
+        flat
+        color="primary"
+        @click="handleOpenChangePasswordDialog"
+        :loading="loading"
+      >Change password</q-btn>
+
+      <q-btn
+        color="primary"
+        @click="handleLogout"
+        :loading="loading"
+      >Logout</q-btn>
+    </div>
   </q-page>
 
   <ha-change-name-dialog
@@ -58,6 +67,11 @@
     v-bind="changeNameProps"
     @submit="handleSubmitName"
   />
+
+  <ha-change-password-dialog
+    v-model="showChangePasswordDialog"
+    v-bind="changeNameProps"
+  ></ha-change-password-dialog>
 </template>
 
 <script
@@ -69,6 +83,7 @@ import { useRouter } from 'vue-router';
 import dayjs from 'dayjs'
 
 import HaChangeNameDialog from 'src/components/dialogs/HaChangeNameDialog.vue';
+import HaChangePasswordDialog from 'src/components/dialogs/HaChangePasswordDialog.vue';
 
 import { updateAccount } from 'src/supabase/account'
 import { logout } from 'src/supabase/auth'
@@ -89,12 +104,12 @@ const loading = ref<boolean>(false)
 const avatar = ref<File | null>(null)
 const filePicker = ref<HTMLElement | null>(null)
 const blockAvatar = ref<boolean>(false)
-const editName = ref<boolean>(false)
 const changeNameProps = reactive<IAccountName>({
   firstName: account.firstName,
   lastName: account.lastName
 })
 const showChangeNameDialog = ref<boolean>(false)
+const showChangePasswordDialog = ref<boolean>(false)
 
 const formatedCreatedAt = computed((): string => {
   return dayjs(account.createdAt).format('DD.MM.YYYY HH:mm')
@@ -127,13 +142,11 @@ const handleLogout = () => {
       loading.value = false
     })
 }
-
 const handleAvatarClick = () => {
   if (blockAvatar.value) return
 
   filePicker.value?.pickFiles()
 }
-
 const handleUploadAvatar = () => {
   if (!avatar.value) return
   blockAvatar.value = true
@@ -145,11 +158,9 @@ const handleUploadAvatar = () => {
       }
     })
 }
-
 const handelClickEditName = () => {
   showChangeNameDialog.value = true
 }
-
 const handleSubmitName = (data: IAccountName) => {
   console.log('-- handleSubmitName ---');
 
@@ -158,6 +169,9 @@ const handleSubmitName = (data: IAccountName) => {
     last_name: data.lastName
   })
     .then(() => getAccountData())
+}
+const handleOpenChangePasswordDialog = () => {
+  showChangePasswordDialog.value = true
 }
 
 getAccountData()

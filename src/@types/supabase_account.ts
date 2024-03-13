@@ -13,3 +13,9 @@ export interface IAccount extends IAccountName {
   email?: string,
   createdAt?: string
 }
+
+export interface IAccountPasswords {
+  oldPassword: string,
+  newPassword: string,
+  newPasswordRepeat: string
+}
