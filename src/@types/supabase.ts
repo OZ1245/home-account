@@ -1,18 +1,18 @@
 interface IBudgetDataItem {
-  value: number
+  value: string
   date: string
 }
 
-interface IBudgetData {
+export interface IBudgetData {
   prepayment: IBudgetDataItem
   wage: IBudgetDataItem
 }
 
 export interface IBudget {
-  readonly uuid?: string
   readonly created_at?: string
   readonly updated_at?: string
   readonly owner?: string
-  date?: string // YYYY MM
-  data?: IBudgetData | null
+  uuid?: string
+  date: string // YYYY MM
+  data: IBudgetData
 }

@@ -18,42 +18,10 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col">
-        <q-list bordered>
-          <q-expansion-item
-            expand-separator
-            label="Бюджет"
-          >
-            <q-card>
-              <q-card-section>
-                <q-form>
-                  <div class="row ">
-                    <div class="col-5 col-md-4">
-                      <q-input
-                        v-model.number="budgetForm.prepayment"
-                        label="Аванс"
-                      />
-                      <q-input
-                        v-model.number="budgetForm.wage"
-                        label="Заработная палата"
-                      />
-                    </div>
-                    <div class="col-5 offset-1 col-md-4 flex items-center">
-                      <q-input
-                        v-model="totalSalary"
-                        label="Итого (оклад)"
-                        readonly
-                      />
-                    </div>
-                  </div>
-                </q-form>
-              </q-card-section>
-            </q-card>
-          </q-expansion-item>
-        </q-list>
-      </div>
-    </div>
+    <ha-budget
+      v-bind="budgetProps"
+      @save="handleSaveBudget"
+    />
 
     <div class="row">
       <div class="col">
@@ -87,34 +55,48 @@
 >
 import { computed, ref, reactive } from 'vue';
 import dayjs, { Dayjs } from 'dayjs';
+import { useQuasar } from 'quasar';
+import { updateEntities, fetchEntityByDate, fetchEntitiesByPeriod, deleteEntities, deleteEntity } from 'src/supabase/entities';
+import { fetchBudget } from 'src/supabase/budget'
+
 import HaCalendar from 'src/components/HaCalendar.vue'
 import HaMonthPickerDialog from 'src/components/dialogs/HaMonthPickerDialog.vue';
 import HaEntitiesDialog from 'src/components/dialogs/HaEntitiesDialog.vue';
-import { ICalendarProps } from 'src/@types/components'
-import { IEntity } from 'src/@types/supabase_entity';
-import { updateEntity, updateEntities, fetchEntityByDate, fetchEntitiesByPeriod, deleteEntities, deleteEntity } from 'src/supabase/entities';
+import HaBudget from 'src/components/HaBudget.vue';
 
-const budgetForm = reactive<{
-  prepayment: number,
-  wage: number
-}>({
-  prepayment: 0,
-  wage: 0
-})
+import { IBudgetProps, ICalendarProps } from 'src/@types/components'
+import { IEntity } from 'src/@types/supabase_entity';
+import { IBudget, IBudgetData } from 'src/@types/supabase';
+import { updateBudget } from 'src/supabase/budget';
+
+const $q = useQuasar()
+
 const date = ref<Dayjs>(dayjs())
 const showMonthPicker = ref<boolean>(false)
 const showEntitiesDialog = ref<boolean>(false)
 const selectedDate = ref<string>('')
 const monthEntities = ref<IEntity[] | any>([])
 const dayEntities = ref<IEntity[] | any>([])
+const initBudgetData: IBudgetData = {
+  prepayment: {
+    value: '',
+    date: ''
+  },
+  wage: {
+    value: '',
+    date: ''
+  }
+}
+const budgetProps = reactive<IBudgetProps>({
+  uuid: '',
+  date: '',
+  data: initBudgetData
+})
 
 const displayDate = computed(() => ({
   month: date.value.format('MMMM'),
   year: date.value.format('YYYY')
 }))
-const totalSalary = computed((): number => (
-  budgetForm.prepayment + budgetForm.wage
-))
 const calendarProps = computed((): ICalendarProps => ({
   date: date.value.toDate(),
   entities: monthEntities.value
@@ -125,6 +107,7 @@ const handleChangeDate = () => {
 }
 const handleApplyCurrentDate = (e: Date) => {
   date.value = dayjs(e)
+  getBudget()
 }
 const handelClickDay = (date: Date) => {
   const datestring = dayjs(date).format('YYYY-MM-DD')
@@ -148,6 +131,17 @@ const handleRemoveEntity = (uuid: string) => {
   deleteEntity(uuid)
     .then(() => getEntities())
 }
+const handleSaveBudget = (data: IBudget) => {
+  updateBudget(data)
+    .then(({ error }) => {
+      if (!error) {
+        $q.notify({
+          message: `Бюджет на ${date.value.format('MMMM')} ${date.value.format('YYYY')} сохранен.`,
+          type: 'positive'
+        })
+      }
+    })
+}
 
 const getEntities = () => {
   fetchEntitiesByPeriod({
@@ -158,8 +152,27 @@ const getEntities = () => {
       monthEntities.value = data
     })
 }
+const getBudget = () => {
+  fetchBudget(date.value.format('YYYY MM'))
+    .then(({ data }) => {
+      if (data.length) {
+        budgetProps.uuid = data[0].uuid
+        budgetProps.date = data[0].date
+        budgetProps.data = data[0].data
+      } else {
+        budgetProps.uuid = ''
+        budgetProps.date = date.value.format('YYYY MM')
+        budgetProps.data = initBudgetData
+      }
+    })
+}
 
-getEntities()
+const init = () => {
+  getEntities()
+  getBudget()
+}
+
+init()
 </script>
 
 <style lang="scss"></style>

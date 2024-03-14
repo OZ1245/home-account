@@ -31,11 +31,14 @@ export const updateBudget = async (payload: IBudget): Promise<IBudget | any> => 
   const { date, data } = payload
 
   if (!date || !data) {
+    const error = 'Не заполнены обязательные поля'
+
     Notify.create({
-      message: 'Не заполнены обязательные поля',
+      message: error,
       type: 'negative'
     })
-    return
+
+    return { error }
   }
 
   return await supabase.from('budget')
