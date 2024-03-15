@@ -43,7 +43,7 @@ import { computed } from 'vue'
 
 // TODO: Разбор строки формата для составления маски и регулярного выражения
 const props = defineProps<{
-  modelValue: string | null
+  modelValue?: string | null
   label?: string
   format?: string
 }>()

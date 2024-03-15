@@ -226,10 +226,8 @@ const handleDone = () => {
 }
 const handleAddEntity = () => {
   entities.value.push({
+    ...initForm,
     date: props.date,
-    name: initForm.name,
-    amount: initForm.amount,
-    note: initForm.note,
   })
 }
 const handleRemoveAll = () => {

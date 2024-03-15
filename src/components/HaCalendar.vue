@@ -1,7 +1,7 @@
 <template>
   <div
     ref="rootElement"
-    class="calendar q-py-md"
+    class="calendar"
   >
     <calendar-view
       :show-date="props.date"

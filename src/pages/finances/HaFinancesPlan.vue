@@ -1,6 +1,6 @@
 <template>
   <q-page
-    class="finance-plan"
+    class="finance-plan column q-gutter-md"
     padding
   >
     <div class="row">
@@ -18,10 +18,25 @@
       </div>
     </div>
 
-    <ha-budget
-      v-bind="budgetProps"
-      @save="handleSaveBudget"
-    />
+    <div class="row">
+      <div class="col">
+        <ha-budget
+          v-bind="budgetProps"
+          @save="handleSaveBudget"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col flex justify-end">
+        <q-btn
+          icon="add"
+          color="primary"
+          label="Quickly adding Entities"
+          @click="handleQuickleAddingEntities"
+        />
+      </div>
+    </div>
 
     <div class="row">
       <div class="col">
@@ -37,7 +52,7 @@
     v-model="showMonthPicker"
     :date="date"
     @apply="handleApplyCurrentDate"
-  ></ha-month-picker-dialog>
+  />
 
   <ha-entities-dialog
     v-model="showEntitiesDialog"
@@ -46,7 +61,12 @@
     @save="handleSaveEntities"
     @remove-all="handleRemoveAllEntites"
     @remove-entity="handleRemoveEntity"
-  ></ha-entities-dialog>
+  />
+
+  <ha-quickly-adding-entities-dialog
+    v-model="showQuickleAddingEntities"
+    @save="handleSaveQuicklyEntities"
+  />
 </template>
 
 <script
@@ -63,10 +83,10 @@ import HaCalendar from 'src/components/HaCalendar.vue'
 import HaMonthPickerDialog from 'src/components/dialogs/HaMonthPickerDialog.vue';
 import HaEntitiesDialog from 'src/components/dialogs/HaEntitiesDialog.vue';
 import HaBudget from 'src/components/HaBudget.vue';
+import HaQuicklyAddingEntitiesDialog from 'src/components/dialogs/HaQuicklyAddingEntitiesDialog.vue';
 
 import { IBudgetProps, ICalendarProps } from 'src/@types/components'
-import { IEntity } from 'src/@types/supabase_entity';
-import { IBudget, IBudgetData } from 'src/@types/supabase';
+import { IEntity, IBudget, IBudgetData } from 'src/@types/supabase';
 import { updateBudget } from 'src/supabase/budget';
 
 const $q = useQuasar()
@@ -92,6 +112,7 @@ const budgetProps = reactive<IBudgetProps>({
   date: '',
   data: initBudgetData
 })
+const showQuickleAddingEntities = ref<boolean>(false)
 
 const displayDate = computed(() => ({
   month: date.value.format('MMMM'),
@@ -108,6 +129,7 @@ const handleChangeDate = () => {
 const handleApplyCurrentDate = (e: Date) => {
   date.value = dayjs(e)
   getBudget()
+  getEntities()
 }
 const handelClickDay = (date: Date) => {
   const datestring = dayjs(date).format('YYYY-MM-DD')
@@ -141,6 +163,13 @@ const handleSaveBudget = (data: IBudget) => {
         })
       }
     })
+}
+const handleQuickleAddingEntities = () => {
+  showQuickleAddingEntities.value = true
+}
+const handleSaveQuicklyEntities = (entities: IEntity[]) => {
+  updateEntities(entities)
+    .then(() => getEntities())
 }
 
 const getEntities = () => {
