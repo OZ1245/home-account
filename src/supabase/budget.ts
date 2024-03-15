@@ -2,7 +2,7 @@ import { supabase } from "./client";
 import { LocalStorage, Notify } from "quasar";
 import { IBudget } from 'src/@types/supabase'
 
-const authData = JSON.parse(LocalStorage.getItem('sb-127-auth-token') as string)
+const authData = JSON.parse(LocalStorage.getItem(process.env.VUE_APP_SUPABASE_TOKEN_NAME as string) as string)
 
 /**
  * Бюджет за месяц

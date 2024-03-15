@@ -3,7 +3,7 @@ import { uploadAvatar as apiUploadAvatar, updateAccount, fetchAccountData } from
 import { getObjectUrl } from 'src/supabase/storage'
 
 export function useAccount () {
-  const authData = JSON.parse(LocalStorage.getItem('sb-127-auth-token') as string)
+  const authData = JSON.parse(LocalStorage.getItem(process.env.VUE_APP_SUPABASE_TOKEN_NAME as string) as string)
 
   const uploadAvatar = async (file: File) => {
     return await apiUploadAvatar({

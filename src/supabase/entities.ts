@@ -3,7 +3,7 @@ import { supabase } from "./client";
 import { IEntity } from 'src/@types/supabase'
 import { IPeriod } from 'src/@types/common'
 
-const authData = JSON.parse(LocalStorage.getItem('sb-127-auth-token') as string)
+const authData = JSON.parse(LocalStorage.getItem(process.env.VUE_APP_SUPABASE_TOKEN_NAME as string) as string)
 
 export const fetchEntityByDate = async (date: string): Promise<IEntity | any> => {
   return await supabase.from('entities')

@@ -1,5 +1,5 @@
 import { Notify } from 'quasar'
-import { supabase } from './client.js'
+import { supabase } from './client'
 
 import { ISignUp, ILogin } from 'src/@types/supabase'
 

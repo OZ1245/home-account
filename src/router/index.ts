@@ -35,7 +35,7 @@ export default route(function (/* { store, ssrContext } */) {
   });
 
   Router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.auth) && !LocalStorage.getItem('sb-127-auth-token')) {
+    if (to.matched.some(record => record.meta.auth) && !LocalStorage.getItem(process.env.VUE_APP_SUPABASE_TOKEN_NAME as string)) {
       next({ name: 'AccountLogin', query: { next: to.fullPath } })
     } else {
       next()

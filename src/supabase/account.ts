@@ -8,7 +8,7 @@ interface IUpdateAccount {
   avatar?: string
 }
 
-const authData = JSON.parse(LocalStorage.getItem('sb-127-auth-token') as string)
+const authData = JSON.parse(LocalStorage.getItem(process.env.VUE_APP_SUPABASE_TOKEN_NAME as string) as string)
 
 export const fetchAccountData = async (): Promise<IAccount | any> => {
   return await supabase.from('account')
