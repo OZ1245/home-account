@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { IEntity } from 'src/@types/supabase_entity'
+import { IEntity } from 'src/@types/supabase'
 
 export const useCounterStore = defineStore('counter', {
   state: () => ({

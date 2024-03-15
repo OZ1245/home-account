@@ -1,6 +1,4 @@
-import { IAccountName } from "./supabase_account"
-import { IEntity } from "./supabase_entity"
-import { IBudget, IBudgetData } from './supabase'
+import { IAccountName, IEntity, IBudget } from "./supabase"
 
 export interface ICalendarProps {
   date: Date

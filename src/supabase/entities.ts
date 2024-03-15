@@ -1,6 +1,6 @@
 import { LocalStorage } from "quasar";
 import { supabase } from "./client";
-import { IEntity, IAddEntity, IUpdateEntity } from 'src/@types/supabase_entity'
+import { IEntity } from 'src/@types/supabase'
 import { IPeriod } from 'src/@types/common'
 
 const authData = JSON.parse(LocalStorage.getItem('sb-127-auth-token') as string)

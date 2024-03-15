@@ -1,6 +1,6 @@
 import { LocalStorage } from "quasar";
 import { supabase } from "./client";
-import { IAccount, IUploadAvatar } from 'src/@types/supabase_account'
+import { IAccount, IUploadAvatar } from 'src/@types/supabase'
 
 interface IUpdateAccount {
   first_name?: string,

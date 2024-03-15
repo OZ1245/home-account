@@ -1,7 +1,7 @@
-import { LocalStorage, Notify } from 'quasar'
+import { Notify } from 'quasar'
 import { supabase } from './client.js'
 
-import { ISignUp, ILogin } from 'src/@types/supabase_auth'
+import { ISignUp, ILogin } from 'src/@types/supabase'
 
 interface INewAccountData {
   uuid: string
