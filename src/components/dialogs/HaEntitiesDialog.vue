@@ -167,15 +167,19 @@
   lang="ts"
   setup
 >
+import { computed, reactive, ref, watch, toRef } from 'vue';
 import dayjs from 'dayjs';
-import { IEntity } from 'src/@types/supabase_entity';
-import { computed, reactive, ref, watch } from 'vue';
 
-const props = defineProps<{
+import { IEntity } from 'src/@types/supabase';
+
+const props = withDefaults(defineProps<{
   modelValue: boolean,
-  date: string,
+  date?: string,
   entities?: IEntity[]
-}>()
+}>(), {
+  date: dayjs(new Date()).format('YYYY-MM-DD'),
+  entities: () => []
+})
 
 const emits = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
@@ -195,7 +199,7 @@ const initForm = reactive<{
   amount: null,
   note: ''
 })
-const entities = ref<IEntity[]>([])
+const entities = toRef(props, 'entities')
 const showRemoveAllDialog = ref<boolean>(false)
 const showRemoveEntityDialog = ref<boolean>(false)
 const deleteEntityIndex = ref<number | null>(null)
@@ -209,17 +213,6 @@ const deleteEntityName = computed((): string => (
     ? entities.value[deleteEntityIndex.value].name || ''
     : ''
 ))
-
-watch(
-  () => props.modelValue,
-  () => {
-    initForm.date = (props.date)
-      ? props.date
-      : dayjs(new Date()).format('YYYY-MM-DD')
-
-    entities.value = props.entities || []
-  }
-)
 
 const handleHideModal = () => {
   emits('update:modelValue', false)
