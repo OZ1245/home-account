@@ -189,22 +189,22 @@ const emits = defineEmits<{
 }>()
 
 const initForm = reactive<{
-  date: string
   name: string
   amount: string | null
   note: string
 }>({
-  date: '',
   name: '',
   amount: null,
   note: ''
 })
 const entities = toRef(props, 'entities')
+const isShow = toRef(props, 'modelValue')
+
 const showRemoveAllDialog = ref<boolean>(false)
 const showRemoveEntityDialog = ref<boolean>(false)
 const deleteEntityIndex = ref<number | null>(null)
 
-const isShow = computed((): boolean => props.modelValue)
+// const isShow = computed((): boolean => props.modelValue)
 const formatedDate = computed((): string => (
   (props.date) ? dayjs(props.date).format('DD MMM YYYY') : ''
 ))
@@ -222,12 +222,11 @@ const handleCancel = () => {
 }
 const handleDone = () => {
   emits('save', entities.value)
-  entities.value = []
   emits('update:modelValue', false)
 }
 const handleAddEntity = () => {
   entities.value.push({
-    date: initForm.date,
+    date: props.date,
     name: initForm.name,
     amount: initForm.amount,
     note: initForm.note,

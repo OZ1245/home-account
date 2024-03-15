@@ -66,7 +66,7 @@ export const updateEntities = async (payload: IEntity[]): Promise<IEntity[] | an
     .insert(insertPayload)
     .select()
 
-  Promise.all([upsertResponse, insertResponse])
+  return Promise.all([upsertResponse, insertResponse])
     .then((responses) => {
       return responses
     })
