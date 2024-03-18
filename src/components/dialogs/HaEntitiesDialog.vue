@@ -4,7 +4,7 @@
     class="entities-dialog"
     @hide="handleHideModal"
   >
-    <q-card style="width: 100%; max-width: 800px">
+    <q-card style="width: 100%; max-width: 820px">
       <q-card-section class="row items-center q-pb-none">
         <p class="text-h6 q-mb-none">Добавить платежи на {{ formatedDate }}</p>
         <q-space />
@@ -22,34 +22,64 @@
           <div
             v-for="(entity, i) in entities"
             :key="`entity-form-${i}`"
-            class="row q-pb-md q-col-gutter-md items-end justify-between"
+            class="row q-col-gutter-md"
           >
-            <q-input
-              v-model="entity.name"
-              class="entities-dialog__field"
-              label="Название предмета"
-            />
-            <q-input
-              v-model="entity.amount"
-              label="Сумма"
-              mask="#.##"
-              fill-mask="0"
-              reverse-fill-mask
-              class="entities-dialog__field"
-            />
-            <q-input
-              v-model="entity.note"
-              label="Примечание"
-              class="entities-dialog__field"
-            />
+            <div class="col-6 col-md-3">
 
-            <div class="entities-dialog__remove-button">
+              <q-input
+                v-model="entity.name"
+                label="Название предмета"
+              />
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input
+                v-model="entity.amount"
+                label="Сумма"
+                mask="#.##"
+                fill-mask="0"
+                reverse-fill-mask
+              />
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input
+                v-model="entity.note"
+                label="Примечание"
+              />
+            </div>
+
+            <div class="col-12 col-md-3 flex items-center justify-end justify-md-center">
               <q-btn
                 flat
                 icon="delete"
                 color="negative"
                 @click="handleRemoveEntity(i)"
               />
+              <q-btn-dropdown
+                flat
+                icon="content_copy"
+                color="primary"
+              >
+                <q-list>
+                  <q-item
+                    clickable
+                    v-close-popup
+                    @click="handleCopyEntityToCurrentDay(i)"
+                  >
+                    <q-item-section>
+                      <q-item-label>В текущий день</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    clickable
+                    v-close-popup
+                    @click="handleCopyEntityToOtherDay(i)"
+                  >
+                    <q-item-section>
+                      <q-item-label>В другой</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
             </div>
           </div>
 
@@ -252,6 +282,19 @@ const handleConfirmRemoveAll = () => {
 const handleRemoveEntity = (index: number) => {
   showRemoveEntityDialog.value = true
   deleteEntityIndex.value = index
+}
+const handleCopyEntityToCurrentDay = (index: number) => {
+  const entity = {
+    date: entities.value[index].date,
+    name: entities.value[index].name,
+    amount: entities.value[index].amount,
+    note: entities.value[index].note
+  }
+
+  entities.value.splice(index, 0, entity)
+}
+const handleCopyEntityToOtherDay = (index: number) => {
+  // TODO:
 }
 const handleConfirmRemoveEntity = () => {
   if (deleteEntityIndex.value === null) return

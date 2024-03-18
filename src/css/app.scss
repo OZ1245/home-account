@@ -1,4 +1,7 @@
 // app global css in SCSS form
+
+@import "quasar/src/css/flex-addon.sass";
+
 .q-field__native[required] ~ .q-field__label:after {
   content: ' *';
   color: $red;
