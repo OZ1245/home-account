@@ -61,6 +61,7 @@
     @save="handleSaveEntities"
     @remove-all="handleRemoveAllEntites"
     @remove-entity="handleRemoveEntity"
+    @copy-entity="handleCopyEntity"
   />
 
   <ha-quickly-adding-entities-dialog
@@ -138,6 +139,7 @@ const handelClickDay = (date: Date) => {
   fetchEntityByDate(datestring)
     .then(({ data }) => {
       dayEntities.value = data
+
       showEntitiesDialog.value = true
     })
 }
@@ -151,6 +153,10 @@ const handleRemoveAllEntites = (uuidList: string[]) => {
 }
 const handleRemoveEntity = (uuid: string) => {
   deleteEntity(uuid)
+    .then(() => getEntities())
+}
+const handleCopyEntity = (entity: IEntity) => {
+  updateEntities([entity])
     .then(() => getEntities())
 }
 const handleSaveBudget = (data: IBudget) => {

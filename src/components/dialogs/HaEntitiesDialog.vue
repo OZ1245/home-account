@@ -191,6 +191,30 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+
+  <q-dialog v-model="showCopyDatepicker">
+    <q-card>
+      <q-card-section class="row items-center q-pb-none">
+        <p class="text-h6 q-mb-none">Копировать сущность</p>
+        <q-space />
+        <q-btn
+          icon="close"
+          flat
+          round
+          dense
+          v-close-popup
+        />
+      </q-card-section>
+
+      <q-card-section>
+        <q-date
+          v-model="copiedEntityDate"
+          mask="DD.MM.YYYY"
+          @update:model-value="handleSelectCopiedEntityDate"
+        />
+      </q-card-section>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script
@@ -216,6 +240,7 @@ const emits = defineEmits<{
   (e: 'save', value: IEntity[]): void
   (e: 'removeAll', value: string[]): void
   (e: 'removeEntity', value: string): void
+  (e: 'copyEntity', value: IEntity): void
 }>()
 
 const initForm = reactive<{
@@ -227,12 +252,16 @@ const initForm = reactive<{
   amount: null,
   note: ''
 })
+
 const entities = toRef(props, 'entities')
 const isShow = toRef(props, 'modelValue')
 
 const showRemoveAllDialog = ref<boolean>(false)
 const showRemoveEntityDialog = ref<boolean>(false)
 const deleteEntityIndex = ref<number | null>(null)
+const showCopyDatepicker = ref<boolean>(false)
+const copiedEntity = ref<IEntity | null>(null)
+const copiedEntityDate = ref<string>('')
 
 // const isShow = computed((): boolean => props.modelValue)
 const formatedDate = computed((): string => (
@@ -294,7 +323,13 @@ const handleCopyEntityToCurrentDay = (index: number) => {
   entities.value.splice(index, 0, entity)
 }
 const handleCopyEntityToOtherDay = (index: number) => {
-  // TODO:
+  copiedEntity.value = {
+    name: entities.value[index].name,
+    amount: entities.value[index].amount,
+    note: entities.value[index].note
+  }
+
+  showCopyDatepicker.value = true
 }
 const handleConfirmRemoveEntity = () => {
   if (deleteEntityIndex.value === null) return
@@ -307,6 +342,18 @@ const handleConfirmRemoveEntity = () => {
 
   entities.value.splice(deleteEntityIndex.value, 1)
   deleteEntityIndex.value = null
+}
+const handleSelectCopiedEntityDate = () => {
+  showCopyDatepicker.value = false
+
+  if (!copiedEntity.value) return
+
+  emits('copyEntity', {
+    ...copiedEntity.value,
+    date: dayjs(copiedEntityDate.value, 'DD.MM.YYYY').format('YYYY-MM-DD')
+  })
+
+  copiedEntity.value = null
 }
 </script>
 
