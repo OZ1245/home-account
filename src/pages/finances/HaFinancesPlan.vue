@@ -4,17 +4,35 @@
     padding
   >
     <div class="row">
-      <div class="col flex justify-center items-center">
-        <h1 class="text-h4 text-center finance-plan__heading inline-block">
-          {{ displayDate.month }} {{ displayDate.year }}
-        </h1>
-        <q-btn
-          color="primary"
-          icon="edit_calendar"
-          size="md"
-          flat
-          @click="handleChangeDate"
-        ></q-btn>
+      <div class="col flex justify-between">
+        <div class="col-1 flex items-center">
+          <q-btn
+            flat
+            icon="chevron_left"
+            color="primary"
+            @click="handlePreviosMonthClick"
+          ></q-btn>
+        </div>
+        <div class="col flex justify-center items-center">
+          <h1 class="text-h4 text-center finance-plan__heading inline-block">
+            {{ displayDate.month }} {{ displayDate.year }}
+          </h1>
+          <q-btn
+            color="primary"
+            icon="edit_calendar"
+            size="md"
+            flat
+            @click="handleChangeDate"
+          ></q-btn>
+        </div>
+        <div class="col-1 flex items-center">
+          <q-btn
+            flat
+            icon="chevron_right"
+            color="primary"
+            @click="handleNextMonthClick"
+          ></q-btn>
+        </div>
       </div>
     </div>
 
@@ -176,6 +194,14 @@ const handleQuickleAddingEntities = () => {
 const handleSaveQuicklyEntities = (entities: IEntity[]) => {
   updateEntities(entities)
     .then(() => getEntities())
+}
+const handlePreviosMonthClick = () => {
+  date.value = date.value.subtract(1, 'month')
+  getEntities()
+}
+const handleNextMonthClick = () => {
+  date.value = date.value.add(1, 'month')
+  getEntities()
 }
 
 const getEntities = () => {
