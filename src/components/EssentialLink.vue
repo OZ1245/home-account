@@ -22,6 +22,9 @@
   setup
   lang="ts"
 >
+import { VueClassObjectProp } from 'quasar';
+import { computed } from 'vue';
+
 export interface EssentialLinkProps {
   title: string;
   caption?: string;
@@ -32,5 +35,6 @@ withDefaults(defineProps<EssentialLinkProps>(), {
   caption: '',
   link: '#',
   icon: '',
+  align: ''
 });
 </script>

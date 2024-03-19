@@ -1,5 +1,5 @@
 import { LocalStorage } from "quasar";
-import { uploadAvatar as apiUploadAvatar, updateAccount, fetchAccountData } from 'src/supabase/account'
+import { uploadAvatar as apiUploadAvatar, updateAccount, fetchAccountData, fetchAvatar } from 'src/supabase/account'
 import { getObjectUrl } from 'src/supabase/storage'
 
 export function useAccount () {
@@ -45,8 +45,27 @@ export function useAccount () {
       })
   }
 
+  const getAvatar = async () => {
+    let url = ''
+
+    const avatar = await fetchAvatar()
+    console.log('avatar:', avatar);
+
+
+    if (!avatar.error) {
+      url = await getObjectUrl({
+        bucketName: 'avatars',
+        path: avatar.data[0].avatar
+      })
+        .then(({ data }) => data.publicUrl)
+    }
+
+    return url
+  }
+
   return {
     uploadAvatar,
-    getFullAccountData
+    getFullAccountData,
+    getAvatar
   }
 }

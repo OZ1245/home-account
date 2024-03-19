@@ -88,7 +88,8 @@ import HaChangePasswordDialog from 'src/components/dialogs/HaChangePasswordDialo
 import { updateAccount } from 'src/supabase/account'
 import { logout } from 'src/supabase/auth'
 import { useAccount } from 'src/composables/account'
-import { IAccount, IAccountName } from 'src/@types/supabase_account';
+
+import { IAccount, IAccountName } from 'src/@types/supabase';
 
 const router = useRouter()
 const { getFullAccountData, uploadAvatar } = useAccount()

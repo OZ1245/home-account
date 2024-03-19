@@ -16,6 +16,12 @@ export const fetchAccountData = async (): Promise<IAccount | any> => {
     .eq('user_id', authData.user.id)
 }
 
+export const fetchAvatar = async (): Promise<string | any> => {
+  return await supabase.from('account')
+    .select('avatar')
+    .eq('user_id', authData.user.id)
+}
+
 export const uploadAvatar = async ({ fileName, file }: IUploadAvatar): Promise<any> => {
   return await supabase.storage.from('avatars')
     .upload(fileName, file, {

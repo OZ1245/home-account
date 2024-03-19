@@ -25,6 +25,7 @@
       show-if-above
       bordered
       :width="250"
+      class="flex column justify-between"
     >
       <q-list>
         <EssentialLink
@@ -32,6 +33,31 @@
           :key="link.title"
           v-bind="link"
         />
+      </q-list>
+
+      <q-list>
+        <q-item
+          clickable
+          tag="a"
+          href="Account"
+        >
+          <q-item-section avatar>
+            <q-avatar v-if="avatar">
+              <img
+                :src="avatar"
+                style="object-fit: cover;"
+              />
+            </q-avatar>
+            <q-icon
+              v-else
+              name="account_circle"
+            />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Account</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -46,7 +72,11 @@
   lang="ts"
 >
 import { ref } from 'vue';
+import { useAccount } from 'src/composables/account';
+
 import EssentialLink from 'components/EssentialLink.vue';
+
+const { getAvatar } = useAccount()
 
 const essentialLinks = [
   {
@@ -55,17 +85,16 @@ const essentialLinks = [
     icon: 'menu_book',
     link: '/finances/plan'
   },
-  {
-    title: 'Account',
-    caption: '',
-    icon: 'account_circle',
-    link: '/account'
-  }
 ];
 const miniState = ref<boolean>(false)
 const leftDrawerOpen = ref(false)
+const avatar = ref<string>('')
 
 function toggleLeftDrawer() {
   miniState.value = !miniState.value
 }
+
+getAvatar().then((result) => {
+  avatar.value = result
+})
 </script>
