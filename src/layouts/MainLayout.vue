@@ -12,10 +12,10 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          Home Accounting
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>Ver. 0.0.1, Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
