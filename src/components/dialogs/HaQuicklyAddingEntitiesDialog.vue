@@ -29,7 +29,7 @@
               />
             </div>
 
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-2">
               <q-input
                 v-model="entity.amount"
                 label="Сумма"
@@ -46,12 +46,18 @@
               />
             </div>
 
-            <div class="col-12 col-md-1 flex items-center justify-end justify-md-center">
+            <div class="col-12 col-md-2 flex items-center justify-end justify-md-center">
               <q-btn
                 flat
                 icon="delete"
                 color="negative"
                 @click="handleRemoveEntity(i)"
+              />
+              <q-btn
+                flat
+                icon="content_copy"
+                color="primary"
+                @click="handleCopyEntityToCurrentDay(i)"
               />
             </div>
           </div>
@@ -130,10 +136,21 @@ const handleAddEntity = () => {
   entities.value.push({ ...initForm })
 }
 const handleCancel = () => {
+  entities.value = []
   emits('update:modelValue', false)
 }
 const handleRemoveEntity = (index: number) => {
   entities.value.splice(index, 1)
+}
+const handleCopyEntityToCurrentDay = (index: number) => {
+  const entity = {
+    date: entities.value[index].date,
+    name: entities.value[index].name,
+    amount: entities.value[index].amount,
+    note: entities.value[index].note
+  }
+
+  entities.value.splice(index, 0, entity)
 }
 const handleRemoveAll = () => {
   entities.value = []
