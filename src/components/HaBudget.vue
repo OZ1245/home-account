@@ -80,9 +80,15 @@
   setup
 >
 import { computed, toRef } from 'vue'
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+
 import HaDatepicker from 'src/components/common/HaDatepicker';
+
 import { IBudget } from 'src/@types/supabase';
 import { IBudgetProps } from 'src/@types/components'
+
+dayjs.extend(customParseFormat)
 
 const props = defineProps<IBudgetProps>()
 
@@ -113,8 +119,14 @@ const handleSave = () => {
   let data: IBudget = {
     date: props.date,
     data: {
-      prepayment: form.value.prepayment,
-      wage: form.value.wage,
+      prepayment: {
+        value: form.value.prepayment.value,
+        date: dayjs(form.value.prepayment.date, 'DD.MM.YYYY').format('YYYY-MM-DD')
+      },
+      wage: {
+        value: form.value.wage.value,
+        date: dayjs(form.value.wage.date, 'DD.MM.YYYY').format('YYYY-MM-DD')
+      },
     }
   }
 

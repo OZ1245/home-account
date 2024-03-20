@@ -49,8 +49,6 @@ export function useAccount () {
     let url = ''
 
     const avatar = await fetchAvatar()
-    console.log('avatar:', avatar);
-
 
     if (!avatar.error) {
       url = await getObjectUrl({

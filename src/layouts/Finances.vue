@@ -6,17 +6,18 @@
     show-if-above
     side="right"
     :mini="!drawer || miniState"
+    mini-to-overlay
     :width="200"
     :breakpoint="500"
     bordered
     :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'"
-    @click.capture="handleDrawerToggler"
   >
     <q-scroll-area class="fit">
       <q-list padding>
         <q-item
           clickable
           v-ripple
+          @click="handleDrawerToggler"
         >
           <q-item-section avatar>
             <q-icon :name="togglerDrawerIcon" />
@@ -26,43 +27,33 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-ripple>
+        <q-item
+          v-ripple
+          clickable
+          :to="{ name: 'FinancesPlan' }"
+          title="Планирование"
+        >
           <q-item-section avatar>
-            <q-icon name="inbox" />
+            <q-icon name="calendar_month" />
           </q-item-section>
 
           <q-item-section>
-            Inbox
+            Планирование
           </q-item-section>
         </q-item>
 
-        <q-item v-ripple>
+        <q-item
+          v-ripple
+          clickable
+          title="Распределение"
+          @click="handleAllocationClick"
+        >
           <q-item-section avatar>
-            <q-icon name="star" />
+            <q-icon name="swap_horiz" />
           </q-item-section>
 
           <q-item-section>
-            Star
-          </q-item-section>
-        </q-item>
-
-        <q-item v-ripple>
-          <q-item-section avatar>
-            <q-icon name="send" />
-          </q-item-section>
-
-          <q-item-section>
-            Send
-          </q-item-section>
-        </q-item>
-
-        <q-item v-ripple>
-          <q-item-section avatar>
-            <q-icon name="drafts" />
-          </q-item-section>
-
-          <q-item-section>
-            Drafts
+            Распределение
           </q-item-section>
         </q-item>
       </q-list>
@@ -75,22 +66,11 @@
   lang="ts"
 >
 import { computed, ref } from 'vue';
-import EssentialLink from 'components/EssentialLink.vue';
+import { useRoute, useRouter } from 'vue-router';
 
-const essentialLinks = [
-  {
-    title: 'Финансовый план',
-    caption: '',
-    icon: 'menu_book',
-    link: '/finances/plan'
-  },
-  {
-    title: 'Account',
-    caption: '',
-    icon: 'account_circle',
-    link: '/account'
-  }
-];
+const $route = useRoute()
+const $router = useRouter()
+
 const miniState = ref<boolean>(true)
 const drawer = ref<boolean>(true)
 
@@ -98,7 +78,16 @@ const togglerDrawerIcon = computed((): string => (
   (miniState.value) ? 'chevron_left' : 'chevron_right'
 ))
 
-function handleDrawerToggler() {
+const handleAllocationClick = () => {
+  $router.push({
+    name: 'FinancesAllocation',
+    params: {
+      date: $route.query?.date as string || null
+    }
+  })
+}
+
+const handleDrawerToggler = () => {
   miniState.value = !miniState.value
 }
 </script>

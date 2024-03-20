@@ -67,6 +67,7 @@
   </q-page>
 
   <ha-month-picker-dialog
+    v-if="date"
     v-model="showMonthPicker"
     :date="date"
     @apply="handleApplyCurrentDate"
@@ -95,8 +96,10 @@
 import { computed, ref, reactive } from 'vue';
 import dayjs, { Dayjs } from 'dayjs';
 import { useQuasar } from 'quasar';
+import { useRoute, useRouter } from 'vue-router';
+import { useFinanceStore } from 'src/stores/entities';
 import { updateEntities, fetchEntityByDate, fetchEntitiesByPeriod, deleteEntities, deleteEntity } from 'src/supabase/entities';
-import { fetchBudget } from 'src/supabase/budget'
+import { fetchBudget, updateBudget } from 'src/supabase/budget'
 
 import HaCalendar from 'src/components/HaCalendar.vue'
 import HaMonthPickerDialog from 'src/components/dialogs/HaMonthPickerDialog.vue';
@@ -106,9 +109,11 @@ import HaQuicklyAddingEntitiesDialog from 'src/components/dialogs/HaQuicklyAddin
 
 import { IBudgetProps, ICalendarProps } from 'src/@types/components'
 import { IEntity, IBudget, IBudgetData } from 'src/@types/supabase';
-import { updateBudget } from 'src/supabase/budget';
 
 const $q = useQuasar()
+const $store = useFinanceStore()
+const $router = useRouter()
+const $route = useRoute()
 
 const date = ref<Dayjs>(dayjs())
 const showMonthPicker = ref<boolean>(false)
@@ -149,6 +154,17 @@ const handleApplyCurrentDate = (e: Date) => {
   date.value = dayjs(e)
   getBudget()
   getEntities()
+  setDateParam()
+}
+const handlePreviosMonthClick = () => {
+  date.value = date.value.subtract(1, 'month')
+  getEntities()
+  setDateParam()
+}
+const handleNextMonthClick = () => {
+  date.value = date.value.add(1, 'month')
+  getEntities()
+  setDateParam()
 }
 const handelClickDay = (date: Date) => {
   const datestring = dayjs(date).format('YYYY-MM-DD')
@@ -195,15 +211,17 @@ const handleSaveQuicklyEntities = (entities: IEntity[]) => {
   updateEntities(entities)
     .then(() => getEntities())
 }
-const handlePreviosMonthClick = () => {
-  date.value = date.value.subtract(1, 'month')
-  getEntities()
-}
-const handleNextMonthClick = () => {
-  date.value = date.value.add(1, 'month')
-  getEntities()
-}
 
+const setDateParam = () => {
+  console.log('--- setDateParam ---');
+  console.log('date.value:', date.value);
+  $router.push({
+    name: 'FinancesPlan',
+    params: {
+      date: date.value.format('YYYY-MM')
+    }
+  })
+}
 const getEntities = () => {
   fetchEntitiesByPeriod({
     start: date.value.startOf('month').toISOString(),
@@ -211,6 +229,7 @@ const getEntities = () => {
   })
     .then(({ data }) => {
       monthEntities.value = data
+      // $store.setEntities(data)
     })
 }
 const getBudget = () => {
@@ -219,7 +238,16 @@ const getBudget = () => {
       if (data.length) {
         budgetProps.uuid = data[0].uuid
         budgetProps.date = data[0].date
-        budgetProps.data = data[0].data
+        budgetProps.data = {
+          prepayment: {
+            value: data[0].data.prepayment.value,
+            date: dayjs(data[0].data.prepayment.date, 'YYYY-MM-DD').format('DD.MM.YYYY')
+          },
+          wage: {
+            value: data[0].data.wage.value,
+            date: dayjs(data[0].data.wage.date, 'YYYY-MM-DD').format('DD.MM.YYYY')
+          },
+        }
       } else {
         budgetProps.uuid = ''
         budgetProps.date = date.value.format('YYYY MM')
@@ -229,6 +257,13 @@ const getBudget = () => {
 }
 
 const init = () => {
+  if ($route.params?.date) {
+    date.value = dayjs($route.params.date as string, 'YYYY-MM')
+  } else {
+    date.value = dayjs()
+  }
+
+  setDateParam()
   getEntities()
   getBudget()
 }

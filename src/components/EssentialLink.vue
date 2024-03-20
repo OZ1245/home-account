@@ -1,8 +1,7 @@
 <template>
   <q-item
     clickable
-    tag="a"
-    :href="link"
+    :to="route"
   >
     <q-item-section
       v-if="icon"
@@ -24,17 +23,18 @@
 >
 import { VueClassObjectProp } from 'quasar';
 import { computed } from 'vue';
+import { RouteLocationRaw } from 'vue-router';
 
 export interface EssentialLinkProps {
   title: string;
   caption?: string;
-  link?: string;
+  route?: RouteLocationRaw | null;
   icon?: string;
 }
 withDefaults(defineProps<EssentialLinkProps>(), {
   caption: '',
   link: '#',
-  icon: '',
+  route: null,
   align: ''
 });
 </script>

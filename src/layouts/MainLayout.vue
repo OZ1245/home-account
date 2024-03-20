@@ -38,8 +38,7 @@
       <q-list>
         <q-item
           clickable
-          tag="a"
-          href="Account"
+          :to="{ name: 'Account' }"
         >
           <q-item-section avatar>
             <q-avatar v-if="avatar">
@@ -83,7 +82,7 @@ const essentialLinks = [
     title: 'Финансовый план',
     caption: '',
     icon: 'menu_book',
-    link: '/finances/plan'
+    route: { name: 'FinancesPlan' }
   },
 ];
 const miniState = ref<boolean>(false)

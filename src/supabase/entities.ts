@@ -18,6 +18,12 @@ export const fetchEntities = async (): Promise<IEntity[] | any> => {
     .eq('owner', authData.user.id)
 }
 
+/**
+ * Получить все сущности за период
+ * @param {string} start Дата начала периода в формате ISO string (dayjs().toISOString())
+ * @param {string} end Дата конца периода в формате ISO string (dayjs().toISOString())
+ * @returns {Promise<IEntity[]>} Массив сущностей
+ */
 export const fetchEntitiesByPeriod = async ({ start, end }: IPeriod): Promise<IEntity[] | any> => {
   return await supabase.from('entities')
     .select('*')
