@@ -12,36 +12,12 @@
     <div class="row">
       <div class="col-6">
         <q-list v-if="listLeft.length">
-          <q-item
-            v-for="(item, i) in listLeft"
-            :key="`list-left-${i}`"
-          >
-            <q-item-section>
-              <!-- <pre>{{ item }}</pre> -->
-              {{ dayjs(item.date, 'YYYY-MM-DD').format('DD.M') }}
-              -
-              {{ item.name }}
-              -
-              {{ item.amount }}
-            </q-item-section>
-          </q-item>
+          <ha-entity-cards :items="listLeft" />
         </q-list>
       </div>
       <div class="col-6">
         <q-list v-if="listRight.length">
-          <q-item
-            v-for="(item, i) in listRight"
-            :key="`list-right-${i}`"
-          >
-            <q-item-section>
-              <!-- <pre>{{ item }}</pre> -->
-              {{ dayjs(item.date, 'YYYY-MM-DD').format('DD.M') }}
-              -
-              {{ item.name }}
-              -
-              {{ item.amount }}
-            </q-item-section>
-          </q-item>
+          <ha-entity-cards :items="listRight" />
         </q-list>
       </div>
     </div>
@@ -57,6 +33,8 @@ import { useRoute } from 'vue-router';
 import { useFinanceStore } from 'src/stores/entities';
 
 import dayjs, { Dayjs } from 'dayjs';
+
+import HaEntityCards from 'src/components/pages/financesAllocation/HaEntityCards.vue'
 
 import { IEntity, IBudget } from 'src/@types/supabase';
 import { fetchBudget } from 'src/supabase/budget';
@@ -118,11 +96,17 @@ const allocate = (option: string = 'p'): IEntity[] => {
     return []
   }
 
-  const allocatedEntities = entities.value.filter((entity) => {
-    const entityDate = dayjs(entity.date, 'YYYY-MM-DD')
-    // console.log('entityDate:', entityDate);
-    return (entityDate >= dateStart && entityDate < dateEnd)
-  })
+  const allocatedEntities = entities.value
+    .filter((entity) => {
+      const entityDate = dayjs(entity.date, 'YYYY-MM-DD')
+      // console.log('entityDate:', entityDate);
+      return (entityDate >= dateStart && entityDate < dateEnd)
+    })
+    .sort((a, b) => {
+      const aDate = dayjs(a.date, 'YYYY-MM-DD')
+      const bDate = dayjs(b.date, 'YYYY-MM-DD')
+      return aDate.isAfter(bDate) ? 1 : -1
+    })
 
   return allocatedEntities
 }
