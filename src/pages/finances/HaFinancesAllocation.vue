@@ -5,20 +5,42 @@
   >
     <div class="row">
       <div class="col">
-        <h1 class="text-h4 text-center">Распределить сущности</h1>
+        <h1 class="text-h4 text-center">
+          Распределить сущности
+          <strong>{{ formattedDate }}</strong>
+        </h1>
       </div>
     </div>
 
-    <div class="row">
+    <div class="row q-col-gutter-md">
       <div class="col-6">
-        <q-list v-if="listLeft.length">
-          <ha-entity-cards :items="listLeft" />
-        </q-list>
+        <p class="text-h6 text-center">
+          Первая половина месяца
+          <span>(до {{ formattedBudgetPeriod }})</span>
+        </p>
+        <ha-entity-list :items="listLeft" />
       </div>
       <div class="col-6">
-        <q-list v-if="listRight.length">
-          <ha-entity-cards :items="listRight" />
-        </q-list>
+        <p class="text-h6 text-center">
+          Вторая половина месяца
+          <span>(после {{ formattedBudgetPeriod }})</span>
+        </p>
+        <ha-entity-list :items="listRight" />
+      </div>
+    </div>
+
+    <div class="row q-col-gutter-md">
+      <div class="col-6">
+        <ha-resume
+          :total-amount="getTotalAmount(listLeft)"
+          :budget="budget?.data.prepayment.value || '0'"
+        />
+      </div>
+      <div class="col-6">
+        <ha-resume
+          :total-amount="getTotalAmount(listRight)"
+          :budget="budget?.data.wage.value || '0'"
+        />
       </div>
     </div>
   </q-page>
@@ -28,13 +50,14 @@
   lang="ts"
   setup
 >
-import { computed, ref, reactive } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useFinanceStore } from 'src/stores/entities';
 
 import dayjs, { Dayjs } from 'dayjs';
 
-import HaEntityCards from 'src/components/pages/financesAllocation/HaEntityCards.vue'
+import HaEntityList from 'src/components/pages/financesAllocation/HaEntityList.vue'
+import HaResume from 'src/components/pages/financesAllocation/HaResume.vue'
 
 import { IEntity, IBudget } from 'src/@types/supabase';
 import { fetchBudget } from 'src/supabase/budget';
@@ -53,6 +76,22 @@ const date = computed((): Dayjs => (
     ? dayjs($route.params?.date as string, 'YYYY MM')
     : dayjs()
 ))
+const formattedDate = computed((): string => (
+  date.value.format('MMMM YYYY')
+))
+const formattedBudgetPeriod = computed((): string => (
+  (budget.value?.data.wage.date)
+    ? dayjs(budget.value.data.wage.date, 'YYYY-MM-DD').format('D').toString()
+    : ''
+))
+
+const getTotalAmount = (list: IEntity[]): string => (
+  list.reduce((accumulator: number, currentItem: IEntity): number => (
+    (currentItem)
+      ? parseFloat(accumulator) + parseFloat(currentItem.amount || '0')
+      : accumulator
+  ), 0).toFixed(2)
+)
 
 const init = () => {
   const budgetPromise = fetchBudget(date.value.format('YYYY MM'))
