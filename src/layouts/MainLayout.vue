@@ -73,7 +73,7 @@
 import { ref } from 'vue';
 import { useAccount } from 'src/composables/account';
 
-import EssentialLink from 'components/EssentialLink.vue';
+import EssentialLink from 'components/layouts/EssentialLink.vue';
 
 const { getAvatar } = useAccount()
 

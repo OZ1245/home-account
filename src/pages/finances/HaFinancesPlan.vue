@@ -101,10 +101,10 @@ import { useFinanceStore } from 'src/stores/entities';
 import { updateEntities, fetchEntityByDate, fetchEntitiesByPeriod, deleteEntities, deleteEntity } from 'src/supabase/entities';
 import { fetchBudget, updateBudget } from 'src/supabase/budget'
 
-import HaCalendar from 'src/components/HaCalendar.vue'
+import HaCalendar from 'src/components/ui/HaCalendar.vue'
 import HaMonthPickerDialog from 'src/components/dialogs/HaMonthPickerDialog.vue';
 import HaEntitiesDialog from 'src/components/dialogs/HaEntitiesDialog.vue';
-import HaBudget from 'src/components/HaBudget.vue';
+import HaBudget from 'src/components/pages/financesPlan/HaBudget.vue';
 import HaQuicklyAddingEntitiesDialog from 'src/components/dialogs/HaQuicklyAddingEntitiesDialog.vue';
 
 import { IBudgetProps, ICalendarProps } from 'src/@types/components'
